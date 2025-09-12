@@ -6,9 +6,9 @@ import (
 
 type Character struct {
 	Nom               string
-	Classe            string
-	Niveau            int
-	HpMax    int
-	HpActuels int
-	Inventaire        []string
+	Class             string
+	Level             int
+	HpMax    		  int
+	HpActual 		  int
+	Inventory       []string
 }
