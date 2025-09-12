@@ -62,3 +62,4 @@ func main() {
 	fmt.Printf("Nom: %s\nClasse: %s\nNiveau: %d\nHP: %d/%d\nInventaire: %v\n",
 		character.Name, character.Class, character.Level, character.HpActual, character.HpMax, character.Inventory)
 }
+ddd
