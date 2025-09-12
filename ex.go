@@ -11,16 +11,16 @@ type Voiture struct {
 }
 
 func main() {
-	//Initialisation de mes voitures
+	// Initialisation de mes voitures
 	var v1 Voiture
 	var v2 Voiture
 
-	//Initialisation des paramètres de ma voiture 1
+	// Initialisation des paramètres de ma voiture 1
 	v1.model = "Audi TT"
 	v1.body = "Coupé"
 	v1.power = 245
 
-	//Initialisation des paramètres de ma voiture 2
+	// Initialisation des paramètres de ma voiture 2
 	v2.model = "Mercedes-AMG"
 	v2.body = "Coupé"
 	v2.power = 585
@@ -33,7 +33,6 @@ func main() {
 	v1.gainPower()
 
 	v1.affichage()
-
 }
 
 func (v Voiture) affichage() {
