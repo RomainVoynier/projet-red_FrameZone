@@ -1,3 +1,4 @@
+package main
 
 // Fonction pour afficher les informations du personnage
 func (c Character) displayInfo() {
