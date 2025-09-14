@@ -88,3 +88,16 @@ func main() {
 	character := initCharacter()
 	character.displayInfo()
 }
+
+// Méthode pour accéder à l'inventaire du personnage
+func (c Character) accessInventory() {
+	fmt.Println("\n🎒 Inventaire du personnage :")
+	if len(c.Inventory) == 0 {
+		fmt.Println("🔍 L'inventaire est vide.")
+		return
+	}
+
+	for i, item := range c.Inventory {
+		fmt.Printf("%d. %s\n", i+1, item)
+	}
+}
