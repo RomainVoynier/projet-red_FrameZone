@@ -91,3 +91,8 @@ func (c Character) displayInfo() {
 	fmt.Printf("🎒 Inventaire : %v\n", c.Inventory)
 	fmt.Printf("💰 Smic       : %d\n", c.Smic)
 }
+
+func main() {
+	character := initCharacter()
+	character.displayInfo()
+}
