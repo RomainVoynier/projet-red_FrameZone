@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strings"
 )
 // Fonction pour afficher les informations du personnage
 func (c Character) displayInfo() {
