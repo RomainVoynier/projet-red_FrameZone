@@ -89,5 +89,5 @@ func (c Character) displayInfo() {
 	fmt.Printf("📊 Niveau     : %d\n", c.Level)
 	fmt.Printf("❤️ HP         : %d/%d\n", c.HpActual, c.HpMax)
 	fmt.Printf("🎒 Inventaire : %v\n", c.Inventory)
-	fmt.Printf("💰 Smic       : %d pièces\n", c.Smic)
+	fmt.Printf("💰 Smic       : %d\n", c.Smic)
 }
