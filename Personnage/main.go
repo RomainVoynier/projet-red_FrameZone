@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// Définition de la structure Character
+// Structure Character
 type Character struct {
 	Name      string
 	Class     string
@@ -59,7 +59,7 @@ func initCharacter() Character {
 		smic = 100
 	}
 
-	inventory := []string{} // Inventaire vide au départ
+	inventory := []string{}
 
 	return Character{
 		Name:      name,
@@ -72,11 +72,19 @@ func initCharacter() Character {
 	}
 }
 
-// Fonction main obligatoire pour exécuter le programme
+// Méthode pour afficher les infos du personnage
+func (c Character) displayInfo() {
+	fmt.Println("\n📋 Informations du personnage :")
+	fmt.Printf("🧾 Nom        : %s\n", c.Name)
+	fmt.Printf("🗡️ Classe     : %s\n", c.Class)
+	fmt.Printf("📊 Niveau     : %d\n", c.Level)
+	fmt.Printf("❤️ HP         : %d/%d\n", c.HpActual, c.HpMax)
+	fmt.Printf("🎒 Inventaire : %v\n", c.Inventory)
+	fmt.Printf("💰 Smic       : %d\n", c.Smic)
+}
+
+// Point d'entrée
 func main() {
 	character := initCharacter()
-
-	fmt.Println("\n🎮 Personnage créé :")
-	fmt.Printf("Nom: %s\nClasse: %s\nNiveau: %d\nHP: %d/%d\nInventaire: %v\nSmic: %d\n",
-		character.Name, character.Class, character.Level, character.HpActual, character.HpMax, character.Inventory, character.Smic)
+	character.displayInfo()
 }
