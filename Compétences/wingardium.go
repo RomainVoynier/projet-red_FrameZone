@@ -19,7 +19,7 @@ func apprendreSort(p *Personnage, sort string) {
 	}
 
 	p.Skills = append(p.Skills, sort)
-	fmt.Printf("✨ %s (%s) a appris le sort « %s » !\n", p.Nom, p.Classe, sort)
+	fmt.Printf("%s (%s) a appris le sort « %s » !\n", p.Nom, p.Classe, sort)
 }
 
 func attribuerSortParClasse(p *Personnage) {
