@@ -95,23 +95,31 @@ func (c Character) accessInventory() {
 func forgeronMenu(c *Character) {
 	for {
 		fmt.Println("\nBienvenue chez le Forgeron")
-		fmt.Println("1. Couronne de Lauriers")
-		fmt.Println("2. Tronc D'Arbre")
-		fmt.Println("3. Bottes de Sapin")
+		fmt.Println("1. Couronne de Lauriers : 5 Smic")
+		fmt.Println("2. Tronc d'Arbre : 15 Smic")
+		fmt.Println("3. Bottes de Sapin : 10 Smic")
 		fmt.Println("4. Retour")
 
 		var choix int
 		fmt.Print("Choix : ")
-		fmt.Scanln(&choix)
+		if _, err := fmt.Scanln(&choix); err != nil {
+			fmt.Println("Entrée invalide.")
+			continue
+		}
 
 		var item string
+		var cost int
+
 		switch choix {
 		case 1:
 			item = "Couronne de Lauriers"
+			cost = 5
 		case 2:
-			item = "Tronc d'Arbre "
+			item = "Tronc d'Arbre"
+			cost = 15
 		case 3:
 			item = "Bottes de Sapin"
+			cost = 10
 		case 4:
 			return
 		default:
@@ -119,9 +127,8 @@ func forgeronMenu(c *Character) {
 			continue
 		}
 
-		// Vérifie si le joueur a assez d'argent
-		if c.Smic >= 5 {
-			c.Smic -= 5
+		if c.Smic >= cost {
+			c.Smic -= cost
 			c.Inventory = append(c.Inventory, item)
 			fmt.Printf("%s fabriqué et ajouté à votre inventaire.\n", item)
 			fmt.Printf("Smic restant : %d\n", c.Smic)
@@ -130,6 +137,7 @@ func forgeronMenu(c *Character) {
 		}
 	}
 }
+
 
 // Point d'entrée
 func main() {
