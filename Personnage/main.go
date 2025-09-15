@@ -95,9 +95,9 @@ func (c Character) accessInventory() {
 func forgeronMenu(c *Character) {
 	for {
 		fmt.Println("\nBienvenue chez le Forgeron")
-		fmt.Println("1. Chapeau de l’aventurier")
-		fmt.Println("2. Tunique de l’aventurier")
-		fmt.Println("3. Bottes de l’aventurier")
+		fmt.Println("1. Couronne de Lauriers")
+		fmt.Println("2. Tronc D'Arbre")
+		fmt.Println("3. Bottes de Sapin")
 		fmt.Println("4. Retour")
 
 		var choix int
