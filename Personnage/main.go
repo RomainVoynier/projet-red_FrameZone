@@ -29,7 +29,7 @@ func choisirClasse() string {
 		case "Chevalier", "Archer", "Magicien":
 			return class
 		default:
-			fmt.Println("❌ Classe invalide. Veuillez entrer : Chevalier, Archer ou Magicien.")
+			fmt.Println("Classe invalide. Veuillez entrer : Chevalier, Archer ou Magicien.")
 		}
 	}
 }
@@ -47,17 +47,13 @@ func initCharacter() Character {
 	switch class {
 	case "Chevalier":
 		hpMax = 150
-		hpActual = 150
-		smic = 100
 	case "Archer":
 		hpMax = 75
-		hpActual = 75
-		smic = 100
 	case "Magicien":
 		hpMax = 100
-		hpActual = 100
-		smic = 100
 	}
+	hpActual = hpMax
+	smic = 50 // Valeur de départ pour les tests
 
 	inventory := []string{}
 
@@ -74,30 +70,94 @@ func initCharacter() Character {
 
 // Méthode pour afficher les infos du personnage
 func (c Character) displayInfo() {
-	fmt.Println("\n📋 Informations du personnage :")
-	fmt.Printf("🧾 Nom        : %s\n", c.Name)
-	fmt.Printf("🗡️ Classe     : %s\n", c.Class)
-	fmt.Printf("📊 Niveau     : %d\n", c.Level)
-	fmt.Printf("❤️ HP         : %d/%d\n", c.HpActual, c.HpMax)
-	fmt.Printf("🎒 Inventaire : %v\n", c.Inventory)
-	fmt.Printf("💰 Smic       : %d\n", c.Smic)
+	fmt.Println("\nInformations du personnage :")
+	fmt.Printf(" Nom        : %s\n", c.Name)
+	fmt.Printf(" Classe     : %s\n", c.Class)
+	fmt.Printf(" Niveau     : %d\n", c.Level)
+	fmt.Printf(" HP         : %d/%d\n", c.HpActual, c.HpMax)
+	fmt.Printf(" Inventaire : %v\n", c.Inventory)
+	fmt.Printf(" Smic       : %d\n", c.Smic)
+}
+
+// Méthode pour accéder à l'inventaire du personnage
+func (c Character) accessInventory() {
+	fmt.Println("\nInventaire du personnage :")
+	if len(c.Inventory) == 0 {
+		fmt.Println("L'inventaire est vide.")
+		return
+	}
+	for i, item := range c.Inventory {
+		fmt.Printf("%d. %s\n", i+1, item)
+	}
+}
+
+// Fonction du forgeron
+func forgeronMenu(c *Character) {
+	for {
+		fmt.Println("\nBienvenue chez le Forgeron")
+		fmt.Println("1. Chapeau de l’aventurier")
+		fmt.Println("2. Tunique de l’aventurier")
+		fmt.Println("3. Bottes de l’aventurier")
+		fmt.Println("4. Retour")
+
+		var choix int
+		fmt.Print("Choix : ")
+		fmt.Scanln(&choix)
+
+		var item string
+		switch choix {
+		case 1:
+			item = "Couronne de Lauriers"
+		case 2:
+			item = "Tronc d'Arbre "
+		case 3:
+			item = "Bottes de Sapin"
+		case 4:
+			return
+		default:
+			fmt.Println("Choix invalide.")
+			continue
+		}
+
+		// Vérifie si le joueur a assez d'argent
+		if c.Smic >= 5 {
+			c.Smic -= 5
+			c.Inventory = append(c.Inventory, item)
+			fmt.Printf("%s fabriqué et ajouté à votre inventaire.\n", item)
+			fmt.Printf("Smic restant : %d\n", c.Smic)
+		} else {
+			fmt.Println("Pas assez de smic pour fabriquer cet objet.")
+		}
+	}
 }
 
 // Point d'entrée
 func main() {
 	character := initCharacter()
-	character.displayInfo()
-}
 
-// Méthode pour accéder à l'inventaire du personnage
-func (c Character) accessInventory() {
-	fmt.Println("\n🎒 Inventaire du personnage :")
-	if len(c.Inventory) == 0 {
-		fmt.Println("🔍 L'inventaire est vide.")
-		return
-	}
+	for {
+		fmt.Println("\n=== MENU PRINCIPAL ===")
+		fmt.Println("1. Afficher les infos du personnage")
+		fmt.Println("2. Accéder à l'inventaire")
+		fmt.Println("3. Aller chez le Forgeron")
+		fmt.Println("4. Quitter")
 
-	for i, item := range c.Inventory {
-		fmt.Printf("%d. %s\n", i+1, item)
+		var choix int
+		fmt.Print("Choix : ")
+		fmt.Scanln(&choix)
+
+		switch choix {
+		case 1:
+			character.displayInfo()
+		case 2:
+			character.accessInventory()
+		case 3:
+			forgeronMenu(&character)
+		case 4:
+			fmt.Println("Au revoir.")
+			return
+		default:
+			fmt.Println("Choix invalide.")
+		}
 	}
 }
