@@ -47,39 +47,39 @@ func initPlayer() Player {
 			if p.HP > p.MaxHP {
 				p.HP = p.MaxHP
 			}
-			fmt.Printf("Vous utilisez une %s. %s. PV actuels : %d/%d\n", "Potion de soin", "Vous récupérez 10 PV", p.HP, p.MaxHP)
+			fmt.Printf("Vous utilisez %s. %s. PV actuels : %d/%d\n", "Potion de soin", "Vous récupérez 10 PV", p.HP, p.MaxHP)
 		},
 	}
 
 	return Player{
-		Name:      "Héros",
+		Name:      "Personnage",
 		HP:        30,
 		MaxHP:     30,
 		Inventory: []Item{potion},
 	}
 }
 
-func monsterTurn(gobelin *Monster, player *Player, tour int) {
+func monsterTurn(monster *Monster, player *Player, turn int) {
 	fmt.Println("\n--- Tour du Monstre ---")
 
-	var degats int
-	if tour%3 == 0 {
-		degats = gobelin.AttackPower * 2
-		fmt.Printf("Attaque SPÉCIALE ! Le %s inflige %d dégâts à %s.\n", gobelin.Name, degats, player.Name)
+	var damage int
+	if turn%3 == 0 {
+		damage = monster.AttackPower * 2
+		fmt.Printf("%s utilise Attaque SPÉCIALE et inflige %d dégâts à %s.\n", monster.Name, damage, player.Name)
 	} else {
-		degats = gobelin.AttackPower
-		fmt.Printf("Le %s attaque et inflige %d dégâts à %s.\n", gobelin.Name, degats, player.Name)
+		damage = monster.AttackPower
+		fmt.Printf("%s attaque et inflige %d dégâts à %s.\n", monster.Name, damage, player.Name)
 	}
 
-	player.HP -= degats
+	player.HP -= damage
 	if player.HP < 0 {
 		player.HP = 0
 	}
 
-	fmt.Printf("PV restants du joueur : %d/%d\n", player.HP, player.MaxHP)
+	fmt.Printf("%s - PV : %d / %d\n", player.Name, player.HP, player.MaxHP)
 }
 
-func characterTurn(player *Player, gobelin *Monster, tour int) {
+func characterTurn(player *Player, monster *Monster, turn int) {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
@@ -90,33 +90,31 @@ func characterTurn(player *Player, gobelin *Monster, tour int) {
 
 		input, _ := reader.ReadString('\n')
 		input = strings.TrimSpace(input)
-		choix, err := strconv.Atoi(input)
+		choice, err := strconv.Atoi(input)
 
-		if err != nil || (choix != 1 && choix != 2) {
+		if err != nil || (choice != 1 && choice != 2) {
 			fmt.Println("Choix invalide. Veuillez entrer 1 ou 2.")
 			continue
 		}
 
-		if choix == 1 {
-			degats := 5
-			gobelin.CurrentHP -= degats
-			if gobelin.CurrentHP < 0 {
-				gobelin.CurrentHP = 0
+		if choice == 1 {
+			damage := 5
+			monster.CurrentHP -= damage
+			if monster.CurrentHP < 0 {
+				monster.CurrentHP = 0
 			}
 
-			fmt.Println("\nVous utilisez 'Attaque basique'.")
-			fmt.Printf("Vous infligez %d dégâts au %s.\n", degats, gobelin.Name)
-			fmt.Printf("PV restants du monstre : %d/%d\n", gobelin.CurrentHP, gobelin.MaxHP)
+			fmt.Printf("%s utilise Attaque basique et inflige %d dégâts à %s.\n", player.Name, damage, monster.Name)
+			fmt.Printf("%s - PV : %d / %d\n", monster.Name, monster.CurrentHP, monster.MaxHP)
 
-			if gobelin.CurrentHP > 0 {
-				monsterTurn(gobelin, player, tour)
+			if monster.CurrentHP > 0 {
+				monsterTurn(monster, player, turn)
 			} else {
-				fmt.Printf("\n%s est vaincu !\n", gobelin.Name)
+				fmt.Printf("%s est vaincu !\n", monster.Name)
 			}
-
 			break
 
-		} else if choix == 2 {
+		} else if choice == 2 {
 			if len(player.Inventory) == 0 {
 				fmt.Println("\nInventaire vide.")
 			} else {
@@ -124,29 +122,30 @@ func characterTurn(player *Player, gobelin *Monster, tour int) {
 				for i, item := range player.Inventory {
 					fmt.Printf("%d. %s - %s\n", i+1, item.Name, item.EffectDesc)
 				}
-
 				fmt.Print("Choisissez un objet à utiliser (ou 0 pour annuler) : ")
+
 				input, _ := reader.ReadString('\n')
 				input = strings.TrimSpace(input)
-				choixItem, err := strconv.Atoi(input)
+				itemChoice, err := strconv.Atoi(input)
 
-				if err != nil || choixItem < 0 || choixItem > len(player.Inventory) {
+				if err != nil || itemChoice < 0 || itemChoice > len(player.Inventory) {
 					fmt.Println("Choix invalide.")
 					continue
 				}
 
-				if choixItem == 0 {
+				if itemChoice == 0 {
 					fmt.Println("Retour au menu.")
 					continue
 				}
 
-				item := player.Inventory[choixItem-1]
+				item := player.Inventory[itemChoice-1]
+				fmt.Printf("Vous utilisez %s.\n", item.Name)
 				item.Use(player)
 
-				player.Inventory = append(player.Inventory[:choixItem-1], player.Inventory[choixItem:]...)
+				player.Inventory = append(player.Inventory[:itemChoice-1], player.Inventory[itemChoice:]...)
 
-				if gobelin.CurrentHP > 0 {
-					monsterTurn(gobelin, player, tour)
+				if monster.CurrentHP > 0 {
+					monsterTurn(monster, player, turn)
 				}
 				break
 			}
@@ -155,22 +154,23 @@ func characterTurn(player *Player, gobelin *Monster, tour int) {
 }
 
 func main() {
-	gobelin := initGoblin()
+	monster := initGoblin()
 	player := initPlayer()
-	tour := 1
+	turn := 1
 
-	fmt.Println("=== Début du combat ===")
-	fmt.Printf("Adversaire : %s (%d PV)\n", gobelin.Name, gobelin.MaxHP)
+	fmt.Println("=== Début du Combat ===")
+	fmt.Printf("Adversaire : %s - PV : %d / %d\n", monster.Name, monster.CurrentHP, monster.MaxHP)
+	fmt.Printf("Vous : %s - PV : %d / %d\n", player.Name, player.HP, player.MaxHP)
 
-	for gobelin.CurrentHP > 0 && player.HP > 0 {
-		characterTurn(&player, &gobelin, tour)
-		tour++
+	for monster.CurrentHP > 0 && player.HP > 0 {
+		characterTurn(&player, &monster, turn)
+		turn++
 	}
 
-	fmt.Println("\n=== Fin du combat ===")
+	fmt.Println("\n=== Fin du Combat ===")
 	if player.HP <= 0 {
 		fmt.Println("Vous avez été vaincu...")
 	} else {
-		fmt.Println("Victoire !")
+		fmt.Println("Victoire ! Le monstre est vaincu.")
 	}
 }
