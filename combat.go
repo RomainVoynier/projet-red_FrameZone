@@ -30,7 +30,7 @@ type Player struct {
 
 func initGoblin() Monster {
 	return Monster{
-		Name:        "Gobelin d'entraînement",
+		Name:        "Golem d'entraînement",
 		MaxHP:       40,
 		CurrentHP:   40,
 		AttackPower: 5,
