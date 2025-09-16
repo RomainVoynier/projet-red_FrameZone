@@ -59,7 +59,7 @@ func initPlayer() Player {
 	}
 }
 
-func monsterTurn(monster *Monster, player *Player, turn int) {
+func goblinPattern(monster *Monster, player *Player, turn int) {
 	fmt.Println("\n--- Tour du Monstre ---")
 
 	var damage int
@@ -79,7 +79,7 @@ func monsterTurn(monster *Monster, player *Player, turn int) {
 	fmt.Printf("%s - PV : %d / %d\n", player.Name, player.HP, player.MaxHP)
 }
 
-func characterTurn(player *Player, monster *Monster, turn int) {
+func charTurn(player *Player, monster *Monster) {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
@@ -148,31 +148,59 @@ func characterTurn(player *Player, monster *Monster, turn int) {
 func trainingFight() {
 	player := initPlayer()
 	monster := initGoblin()
-	tour := 1
+	turn := 1
 
 	fmt.Println("=== Début du Combat d'entraînement ===")
 	fmt.Printf("Adversaire : %s - PV : %d / %d\n", monster.Name, monster.CurrentHP, monster.MaxHP)
 	fmt.Printf("Vous : %s - PV : %d / %d\n", player.Name, player.HP, player.MaxHP)
 
-	for monster.CurrentHP > 0 && player.HP > 0 {
-		fmt.Printf("\n=== TOUR %d ===\n", tour)
-		characterTurn(&player, &monster, tour)
+	for player.HP > 0 && monster.CurrentHP > 0 {
+		fmt.Printf("\n=== TOUR %d ===\n", turn)
 
-		if monster.CurrentHP > 0 {
-			monsterTurn(&monster, &player, tour)
+		charTurn(&player, &monster)
+
+		if monster.CurrentHP <= 0 {
+			fmt.Printf("\n%s est vaincu ! Victoire !\n", monster.Name)
+			break
 		}
 
-		tour++
+		goblinPattern(&monster, &player, turn)
+
+		if player.HP <= 0 {
+			fmt.Printf("\n%s a été vaincu ! Défaite...\n", player.Name)
+			break
+		}
+
+		turn++
 	}
 
-	fmt.Println("\n=== Fin du Combat ===")
-	if player.HP <= 0 {
-		fmt.Println("Vous avez été vaincu...")
-	} else {
-		fmt.Println("Victoire ! Le monstre est vaincu.")
+	fmt.Println("\nRetour au menu principal...")
+}
+
+func mainMenu() {
+	reader := bufio.NewReader(os.Stdin)
+
+	for {
+		fmt.Println("\n=== MENU PRINCIPAL ===")
+		fmt.Println("1. Entraînement")
+		fmt.Println("0. Quitter")
+		fmt.Print("Choisissez une option : ")
+
+		input, _ := reader.ReadString('\n')
+		input = strings.TrimSpace(input)
+
+		switch input {
+		case "1":
+			trainingFight()
+		case "0":
+			fmt.Println("Au revoir !")
+			return
+		default:
+			fmt.Println("Choix invalide. Veuillez entrer 1 ou 0.")
+		}
 	}
 }
 
 func main() {
-	trainingFight()
+	mainMenu()
 }
