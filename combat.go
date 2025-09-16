@@ -84,20 +84,22 @@ func charTurn(player *Player, monster *Monster) {
 
 	for {
 		fmt.Println("\n--- Tour du Joueur ---")
-		fmt.Println("1. Attaquer")
-		fmt.Println("2. Inventaire")
+		fmt.Println("1. Attaquer (attaque basique)")
+		fmt.Println("2. Sorts")
+		fmt.Println("3. Inventaire")
 		fmt.Print("Choisissez une option : ")
 
 		input, _ := reader.ReadString('\n')
 		input = strings.TrimSpace(input)
 		choice, err := strconv.Atoi(input)
 
-		if err != nil || (choice != 1 && choice != 2) {
-			fmt.Println("Choix invalide. Veuillez entrer 1 ou 2.")
+		if err != nil || choice < 1 || choice > 3 {
+			fmt.Println("Choix invalide. Veuillez entrer 1, 2 ou 3.")
 			continue
 		}
 
-		if choice == 1 {
+		switch choice {
+		case 1:
 			damage := 5
 			monster.CurrentHP -= damage
 			if monster.CurrentHP < 0 {
@@ -106,10 +108,44 @@ func charTurn(player *Player, monster *Monster) {
 
 			fmt.Printf("%s utilise Attaque basique et inflige %d dégâts à %s.\n", player.Name, damage, monster.Name)
 			fmt.Printf("%s - PV : %d / %d\n", monster.Name, monster.CurrentHP, monster.MaxHP)
+			return
 
-			break
+		case 2:
+			// Sorts
+			fmt.Println("\n--- Sorts disponibles ---")
+			fmt.Println("1. Coup de poing (8 dégâts)")
+			fmt.Println("2. Boule de feu (18 dégâts)")
+			fmt.Print("Choisissez un sort : ")
 
-		} else if choice == 2 {
+			spellInput, _ := reader.ReadString('\n')
+			spellInput = strings.TrimSpace(spellInput)
+			spellChoice, err := strconv.Atoi(spellInput)
+
+			if err != nil || spellChoice < 1 || spellChoice > 2 {
+				fmt.Println("Sort invalide.")
+				continue
+			}
+
+			var spellName string
+			var damage int
+
+			if spellChoice == 1 {
+				spellName = "Coup de poing"
+				damage = 8
+			} else {
+				spellName = "Boule de feu"
+				damage = 18
+			}
+
+			monster.CurrentHP -= damage
+			if monster.CurrentHP < 0 {
+				monster.CurrentHP = 0
+			}
+			fmt.Printf("%s lance %s et inflige %d dégâts à %s.\n", player.Name, spellName, damage, monster.Name)
+			fmt.Printf("%s - PV : %d / %d\n", monster.Name, monster.CurrentHP, monster.MaxHP)
+			return
+
+		case 3:
 			if len(player.Inventory) == 0 {
 				fmt.Println("\nInventaire vide.")
 			} else {
@@ -138,8 +174,7 @@ func charTurn(player *Player, monster *Monster) {
 				item.Use(player)
 
 				player.Inventory = append(player.Inventory[:itemChoice-1], player.Inventory[itemChoice:]...)
-
-				break
+				return
 			}
 		}
 	}
