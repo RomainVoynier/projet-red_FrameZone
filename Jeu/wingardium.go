@@ -35,7 +35,7 @@ func attribuerSortParClasse(p *Personnage) {
 	}
 }
 
-func main() {
+func Class() {
 	chevalier := Personnage{Classe: "Chevalier"}
 	archer := Personnage{Classe: "Archer"}
 	mage := Personnage{Classe: "Mage"}
