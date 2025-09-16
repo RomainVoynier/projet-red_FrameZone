@@ -107,11 +107,6 @@ func characterTurn(player *Player, monster *Monster, turn int) {
 			fmt.Printf("%s utilise Attaque basique et inflige %d dégâts à %s.\n", player.Name, damage, monster.Name)
 			fmt.Printf("%s - PV : %d / %d\n", monster.Name, monster.CurrentHP, monster.MaxHP)
 
-			if monster.CurrentHP > 0 {
-				monsterTurn(monster, player, turn)
-			} else {
-				fmt.Printf("%s est vaincu !\n", monster.Name)
-			}
 			break
 
 		} else if choice == 2 {
@@ -144,27 +139,30 @@ func characterTurn(player *Player, monster *Monster, turn int) {
 
 				player.Inventory = append(player.Inventory[:itemChoice-1], player.Inventory[itemChoice:]...)
 
-				if monster.CurrentHP > 0 {
-					monsterTurn(monster, player, turn)
-				}
 				break
 			}
 		}
 	}
 }
 
-func main() {
-	monster := initGoblin()
+func trainingFight() {
 	player := initPlayer()
-	turn := 1
+	monster := initGoblin()
+	tour := 1
 
-	fmt.Println("=== Début du Combat ===")
+	fmt.Println("=== Début du Combat d'entraînement ===")
 	fmt.Printf("Adversaire : %s - PV : %d / %d\n", monster.Name, monster.CurrentHP, monster.MaxHP)
 	fmt.Printf("Vous : %s - PV : %d / %d\n", player.Name, player.HP, player.MaxHP)
 
 	for monster.CurrentHP > 0 && player.HP > 0 {
-		characterTurn(&player, &monster, turn)
-		turn++
+		fmt.Printf("\n=== TOUR %d ===\n", tour)
+		characterTurn(&player, &monster, tour)
+
+		if monster.CurrentHP > 0 {
+			monsterTurn(&monster, &player, tour)
+		}
+
+		tour++
 	}
 
 	fmt.Println("\n=== Fin du Combat ===")
@@ -173,4 +171,8 @@ func main() {
 	} else {
 		fmt.Println("Victoire ! Le monstre est vaincu.")
 	}
+}
+
+func main() {
+	trainingFight()
 }
