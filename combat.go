@@ -13,6 +13,7 @@ type Monster struct {
 	MaxHP       int
 	CurrentHP   int
 	AttackPower int
+	XPReward    int
 }
 
 type Item struct {
@@ -26,6 +27,10 @@ type Player struct {
 	HP        int
 	MaxHP     int
 	Inventory []Item
+	Level     int
+	CurrentXP int
+	MaxXP     int
+	Attack    int
 }
 
 func initGoblin() Monster {
@@ -34,6 +39,7 @@ func initGoblin() Monster {
 		MaxHP:       40,
 		CurrentHP:   40,
 		AttackPower: 5,
+		XPReward:    12,
 	}
 }
 
@@ -47,7 +53,7 @@ func initPlayer() Player {
 			if p.HP > p.MaxHP {
 				p.HP = p.MaxHP
 			}
-			fmt.Printf("Vous utilisez %s. %s. PV actuels : %d/%d\n", "Potion de soin", "Vous récupérez 10 PV", p.HP, p.MaxHP)
+			fmt.Printf("Vous utilisez %s. Vous récupérez 10 PV. PV actuels : %d/%d\n", "Potion de soin", p.HP, p.MaxHP)
 		},
 	}
 
@@ -56,7 +62,30 @@ func initPlayer() Player {
 		HP:        30,
 		MaxHP:     30,
 		Inventory: []Item{potion},
+		Level:     1,
+		CurrentXP: 0,
+		MaxXP:     20,
+		Attack:    5,
 	}
+}
+
+func gainXP(player *Player, amount int) {
+	fmt.Printf("\nVous gagnez %d points d'expérience !\n", amount)
+	player.CurrentXP += amount
+
+	for player.CurrentXP >= player.MaxXP {
+		player.CurrentXP -= player.MaxXP
+		player.Level++
+		player.MaxXP += 10
+		player.MaxHP += 5
+		player.Attack += 2
+		player.HP = player.MaxHP
+
+		fmt.Printf("\n🎉 Vous passez au niveau %d !\n", player.Level)
+		fmt.Printf("→ PV max : %d | Attaque : %d | XP pour le prochain niveau : %d\n", player.MaxHP, player.Attack, player.MaxXP)
+	}
+
+	fmt.Printf("XP actuelle : %d / %d\n", player.CurrentXP, player.MaxXP)
 }
 
 func goblinPattern(monster *Monster, player *Player, turn int) {
@@ -100,7 +129,7 @@ func charTurn(player *Player, monster *Monster) {
 
 		switch choice {
 		case 1:
-			damage := 5
+			damage := player.Attack
 			monster.CurrentHP -= damage
 			if monster.CurrentHP < 0 {
 				monster.CurrentHP = 0
@@ -111,7 +140,6 @@ func charTurn(player *Player, monster *Monster) {
 			return
 
 		case 2:
-			// Sorts
 			fmt.Println("\n--- Sorts disponibles ---")
 			fmt.Println("1. Coup de poing (8 dégâts)")
 			fmt.Println("2. Boule de feu (18 dégâts)")
@@ -187,7 +215,7 @@ func trainingFight() {
 
 	fmt.Println("=== Début du Combat d'entraînement ===")
 	fmt.Printf("Adversaire : %s - PV : %d / %d\n", monster.Name, monster.CurrentHP, monster.MaxHP)
-	fmt.Printf("Vous : %s - PV : %d / %d\n", player.Name, player.HP, player.MaxHP)
+	fmt.Printf("Vous : %s - PV : %d / %d | Niveau : %d | XP : %d / %d\n", player.Name, player.HP, player.MaxHP, player.Level, player.CurrentXP, player.MaxXP)
 
 	for player.HP > 0 && monster.CurrentHP > 0 {
 		fmt.Printf("\n=== TOUR %d ===\n", turn)
@@ -196,6 +224,7 @@ func trainingFight() {
 
 		if monster.CurrentHP <= 0 {
 			fmt.Printf("\n%s est vaincu ! Victoire !\n", monster.Name)
+			gainXP(&player, monster.XPReward)
 			break
 		}
 
