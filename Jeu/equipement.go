@@ -2,64 +2,76 @@ package main
 
 import "fmt"
 
-// Structure Equipement
-type Equipement struct {
-	Tete  string
-	Torse string
-	Pieds string
+// Boutique d'équipements disponibles
+var Boutique = []Objet{
+	{"Couronne de Lauriers", 5, "Tete", 5},
+	{"Tronc d'Arbre", 15, "Torse", 20},
+	{"Bottes de Sapin", 10, "Pieds", 10},
 }
+
+// Structure Equipement
+type Objet struct {
+	Nom     string
+	Cout    int
+	Slot    string // "Tete", "Torse", "Pieds"
+	BonusHP int    // Exemple de bonus (on peut en ajouter d'autres plus tard)
+}
+type Equipement struct {
+	Tete  *Objet
+	Torse *Objet
+	Pieds *Objet
+}
+
 
 // Menu du forgeron : Achat d'équipement
 func ForgeronMenu(c *Character) {
 	for {
 		fmt.Println("\nBienvenue chez le Forgeron")
-		fmt.Println("1. Couronne de Lauriers : 5 Smic")
-		fmt.Println("2. Tronc d'Arbre : 15 Smic")
-		fmt.Println("3. Bottes de Sapin : 10 Smic")
-		fmt.Println("4. Retour")
+		fmt.Printf("Smic actuel : %d\n", c.Smic)
+		fmt.Println("Objets disponibles :")
+		for i, obj := range Boutique {
+			fmt.Printf("%d. %s (%s) : %d Smic, +%d HP\n", i+1, obj.Nom, obj.Slot, obj.Cout, obj.BonusHP)
+		}
+		fmt.Println("0. Retour")
 
 		var choix int
 		fmt.Print("Choix : ")
 		_, err := fmt.Scanln(&choix)
-		if err != nil {
-			fmt.Println("Entrée invalide.")
+		if err != nil || choix < 0 || choix > len(Boutique) {
+			fmt.Println("Choix invalide.")
 			continue
 		}
 
-		var cost int
-		switch choix {
-		case 1:
-			cost = 5
-			if c.Smic >= cost {
-				c.Smic -= cost
-				c.Equipement.Tete = "Couronne de Lauriers"
-				fmt.Printf("Objet équipé sur la tête ! Smic restant : %d\n", c.Smic)
-			} else {
-				fmt.Println("Trop pauvre pour cet objet.")
-			}
-		case 2:
-			cost = 15
-			if c.Smic >= cost {
-				c.Smic -= cost
-				c.Equipement.Torse = "Tronc d'Arbre"
-				fmt.Printf("Objet équipé sur le torse ! Smic restant : %d\n", c.Smic)
-			} else {
-				fmt.Println("Trop pauvre pour cet objet.")
-			}
-		case 3:
-			cost = 10
-			if c.Smic >= cost {
-				c.Smic -= cost
-				c.Equipement.Pieds = "Bottes de Sapin"
-				fmt.Printf("Objet équipé sur les pieds ! Smic restant : %d\n", c.Smic)
-			} else {
-				fmt.Println("Trop pauvre pour cet objet.")
-			}
-		case 4:
+		if choix == 0 {
 			fmt.Println("Retour au menu principal.")
 			return
-		default:
-			fmt.Println("Choix invalide.")
 		}
+
+		objet := Boutique[choix-1]
+		if c.Smic < objet.Cout {
+			fmt.Println("Trop pauvre pour cet objet.")
+			continue
+		}
+
+		// Achat
+		c.Smic -= objet.Cout
+
+		// Équipement selon le slot
+		switch objet.Slot {
+		case "Tete":
+			c.Equipement.Tete = &objet
+		case "Torse":
+			c.Equipement.Torse = &objet
+		case "Pieds":
+			c.Equipement.Pieds = &objet
+		}
+
+		// Mise à jour des HP max et actuels
+		c.HpMax = c.CalculerHpMax()
+		if c.HpActual > c.HpMax {
+			c.HpActual = c.HpMax
+		}
+
+		fmt.Printf("Vous avez équipé %s ! Nouveau HP max : %d\n", objet.Nom, c.HpMax)
 	}
 }
