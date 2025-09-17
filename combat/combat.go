@@ -22,6 +22,12 @@ type Item struct {
 	Use        func(*Player)
 }
 
+type Spell struct {
+	Name   string
+	Damage int
+	Used   bool
+}
+
 type Player struct {
 	Name      string
 	HP        int
@@ -31,6 +37,7 @@ type Player struct {
 	CurrentXP int
 	MaxXP     int
 	Attack    int
+	Spells    []Spell
 }
 
 func initGoblin() Monster {
@@ -57,6 +64,11 @@ func initPlayer() Player {
 		},
 	}
 
+	spells := []Spell{
+		{Name: "Coup de poing", Damage: 8, Used: false},
+		{Name: "Boule de feu", Damage: 18, Used: false},
+	}
+
 	return Player{
 		Name:      "Personnage",
 		HP:        30,
@@ -66,6 +78,7 @@ func initPlayer() Player {
 		CurrentXP: 0,
 		MaxXP:     20,
 		Attack:    5,
+		Spells:    spells,
 	}
 }
 
@@ -140,37 +153,42 @@ func charTurn(player *Player, monster *Monster) {
 			return
 
 		case 2:
+			availableSpells := []int{}
 			fmt.Println("\n--- Sorts disponibles ---")
-			fmt.Println("1. Coup de poing (8 dégâts)")
-			fmt.Println("2. Boule de feu (18 dégâts)")
-			fmt.Print("Choisissez un sort : ")
+			for i, spell := range player.Spells {
+				if !spell.Used {
+					fmt.Printf("%d. %s (%d dégâts)\n", len(availableSpells)+1, spell.Name, spell.Damage)
+					availableSpells = append(availableSpells, i)
+				}
+			}
 
+			if len(availableSpells) == 0 {
+				fmt.Println("Aucun sort disponible.")
+				continue
+			}
+
+			fmt.Print("Choisissez un sort : ")
 			spellInput, _ := reader.ReadString('\n')
 			spellInput = strings.TrimSpace(spellInput)
 			spellChoice, err := strconv.Atoi(spellInput)
 
-			if err != nil || spellChoice < 1 || spellChoice > 2 {
+			if err != nil || spellChoice < 1 || spellChoice > len(availableSpells) {
 				fmt.Println("Sort invalide.")
 				continue
 			}
 
-			var spellName string
-			var damage int
+			spellIndex := availableSpells[spellChoice-1]
+			spell := &player.Spells[spellIndex]
 
-			if spellChoice == 1 {
-				spellName = "Coup de poing"
-				damage = 8
-			} else {
-				spellName = "Boule de feu"
-				damage = 18
-			}
-
-			monster.CurrentHP -= damage
+			monster.CurrentHP -= spell.Damage
 			if monster.CurrentHP < 0 {
 				monster.CurrentHP = 0
 			}
-			fmt.Printf("%s lance %s et inflige %d dégâts à %s.\n", player.Name, spellName, damage, monster.Name)
+
+			fmt.Printf("%s lance %s et inflige %d dégâts à %s.\n", player.Name, spell.Name, spell.Damage, monster.Name)
 			fmt.Printf("%s - PV : %d / %d\n", monster.Name, monster.CurrentHP, monster.MaxHP)
+
+			spell.Used = true
 			return
 
 		case 3:
@@ -263,8 +281,4 @@ func mainMenu() {
 			fmt.Println("Choix invalide. Veuillez entrer 1 ou 0.")
 		}
 	}
-}
-
-func main() {
-	mainMenu()
 }

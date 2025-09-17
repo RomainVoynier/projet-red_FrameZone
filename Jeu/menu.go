@@ -12,7 +12,6 @@ func afficherNoms() {
 	fmt.Scanln(&pause)
 }
 
-// Simulation d'entraînement
 func trainingFight() {
 	fmt.Println("\n>>> Début de l'entraînement <<<")
 	var pause string
@@ -28,7 +27,7 @@ func main() {
 		fmt.Println("2. Aller chez le Forgeron")
 		fmt.Println("3. Qui sont-ils")
 		fmt.Println("4. Entrainement")
-		fmt.Println("5. Quitter") // ✅ Option ajoutée
+		fmt.Println("5. Quitter")
 
 		var choix int
 		fmt.Print("Choix : ")
