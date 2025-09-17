@@ -102,12 +102,42 @@ func (c Character) DisplayInfo() {
 	fmt.Println("\nInformations du personnage :")
 	fmt.Printf(" Nom        : %s\n", c.Name)
 	fmt.Printf(" Classe     : %s\n", c.Class.Nom)
-	fmt.Printf(" Description: %s\n", c.Class.Description)
 	fmt.Printf(" Niveau     : %d\n", c.Level)
 	fmt.Printf(" HP         : %d/%d\n", c.HpActual, c.HpMax)
 	fmt.Printf(" Smic       : %d\n", c.Smic)
 	fmt.Println(" Équipement :")
-	fmt.Printf("   Tête  : %s\n", c.Equipement.Tete)
-	fmt.Printf("   Torse : %s\n", c.Equipement.Torse)
-	fmt.Printf("   Pieds : %s\n", c.Equipement.Pieds)
+	
+	if c.Equipement.Tete != nil {
+		fmt.Printf("  Tête  : %s (+%d HP)\n", c.Equipement.Tete.Nom, c.Equipement.Tete.BonusHP)
+	} else {
+		fmt.Println("  Tête  : [Aucun]")
+	}
+
+	if c.Equipement.Torse != nil {
+		fmt.Printf("  Torse : %s (+%d HP)\n", c.Equipement.Torse.Nom, c.Equipement.Torse.BonusHP)
+	} else {
+		fmt.Println("  Torse : [Aucun]")
+	}
+
+	if c.Equipement.Pieds != nil {
+		fmt.Printf("  Pieds : %s (+%d HP)\n", c.Equipement.Pieds.Nom, c.Equipement.Pieds.BonusHP)
+	} else {
+		fmt.Println("  Pieds : [Aucun]")
+	}
+}
+func (c *Character) CalculerHpMax() int {
+	baseHP := c.Class.HpMax
+	bonus := 0
+
+	if c.Equipement.Tete != nil {
+		bonus += c.Equipement.Tete.BonusHP
+	}
+	if c.Equipement.Torse != nil {
+		bonus += c.Equipement.Torse.BonusHP
+	}
+	if c.Equipement.Pieds != nil {
+		bonus += c.Equipement.Pieds.BonusHP
+	}
+
+	return baseHP + bonus
 }
