@@ -1,9 +1,12 @@
 package main
 
 import "fmt"
+
 func main() {
 	menu()
 }
+=======
+
 // Affichage simple de noms
 func afficherNoms() {
 	fmt.Println("\n=== Liste des noms ===")
@@ -14,14 +17,20 @@ func afficherNoms() {
 	fmt.Scanln(&pause)
 }
 
+
 // Simulation d'entraînement
+
 func trainingFight() {
 	fmt.Println("\n>>> Début de l'entraînement <<<")
 	var pause string
 	fmt.Scanln(&pause)
 }
 
+
 func menu() {
+
+func main() {
+
 	character := InitCharacter()
 
 	for {
@@ -30,6 +39,7 @@ func menu() {
 		fmt.Println("2. Aller chez le Forgeron")
 		fmt.Println("3. Qui sont-ils")
 		fmt.Println("4. Entrainement")
+
 		fmt.Println("5. Quitter") 
 
 		var choix int
@@ -54,6 +64,7 @@ func menu() {
 			return
 		default:
 			fmt.Println("Choix invalide.")
+			}
 		}
 	}
 }
