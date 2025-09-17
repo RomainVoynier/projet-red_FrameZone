@@ -85,6 +85,7 @@ func initPlayer() Player {
 	}
 }
 
+// Fonction pour gérer le gain d'expérience et montée de niveau
 func gainXP(player *Player, amount int) {
 	fmt.Printf("\nVous gagnez %d points d'expérience !\n", amount)
 	player.CurrentXP += amount
@@ -93,9 +94,11 @@ func gainXP(player *Player, amount int) {
 		player.CurrentXP -= player.MaxXP
 		player.Level++
 		player.MaxXP += 10
+
+		// Bonus de stats à la montée de niveau
 		player.MaxHP += 5
 		player.Attack += 2
-		player.HP = player.MaxHP
+		player.HP = player.MaxHP // soins complets
 
 		fmt.Printf("\n🎉 Vous passez au niveau %d !\n", player.Level)
 		fmt.Printf("→ PV max : %d | Attaque : %d | XP pour le prochain niveau : %d\n", player.MaxHP, player.Attack, player.MaxXP)
@@ -246,7 +249,7 @@ func trainingFight() {
 
 		if monster.CurrentHP <= 0 {
 			fmt.Printf("\n%s est vaincu ! Victoire !\n", monster.Name)
-			gainXP(&player, monster.XPReward)
+			gainXP(&player, monster.XPReward) // Ajout de l'expérience après victoire
 			break
 		}
 
