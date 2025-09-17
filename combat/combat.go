@@ -85,7 +85,6 @@ func initPlayer() Player {
 	}
 }
 
-// Fonction pour gérer le gain d'expérience et montée de niveau
 func gainXP(player *Player, amount int) {
 	fmt.Printf("\nVous gagnez %d points d'expérience !\n", amount)
 	player.CurrentXP += amount
@@ -249,7 +248,7 @@ func trainingFight() {
 
 		if monster.CurrentHP <= 0 {
 			fmt.Printf("\n%s est vaincu ! Victoire !\n", monster.Name)
-			gainXP(&player, monster.XPReward) // Ajout de l'expérience après victoire
+			gainXP(&player, monster.XPReward)
 			break
 		}
 
@@ -263,33 +262,9 @@ func trainingFight() {
 		turn++
 	}
 
-	fmt.Println("\nRetour au menu principal...")
-}
-
-func mainMenu() {
-	reader := bufio.NewReader(os.Stdin)
-
-	for {
-		fmt.Println("\n=== MENU PRINCIPAL ===")
-		fmt.Println("1. Entraînement")
-		fmt.Println("0. Quitter")
-		fmt.Print("Choisissez une option : ")
-
-		input, _ := reader.ReadString('\n')
-		input = strings.TrimSpace(input)
-
-		switch input {
-		case "1":
-			trainingFight()
-		case "0":
-			fmt.Println("Au revoir !")
-			return
-		default:
-			fmt.Println("Choix invalide. Veuillez entrer 1 ou 0.")
-		}
-	}
+	fmt.Println("\nFin du combat. Merci d'avoir joué !")
 }
 
 func main() {
-	mainMenu()
+	trainingFight()
 }
