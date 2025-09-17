@@ -40,6 +40,14 @@ type Player struct {
 	Spells    []Spell
 }
 
+// Réinitialise les sorts à usage unique
+func initSpells() []Spell {
+	return []Spell{
+		{Name: "Coup de poing", Damage: 8, Used: false},
+		{Name: "Boule de feu", Damage: 18, Used: false},
+	}
+}
+
 func initGoblin() Monster {
 	return Monster{
 		Name:        "Golem d'entraînement",
@@ -64,11 +72,6 @@ func initPlayer() Player {
 		},
 	}
 
-	spells := []Spell{
-		{Name: "Coup de poing", Damage: 8, Used: false},
-		{Name: "Boule de feu", Damage: 18, Used: false},
-	}
-
 	return Player{
 		Name:      "Personnage",
 		HP:        30,
@@ -78,7 +81,7 @@ func initPlayer() Player {
 		CurrentXP: 0,
 		MaxXP:     20,
 		Attack:    5,
-		Spells:    spells,
+		Spells:    initSpells(),
 	}
 }
 
@@ -229,6 +232,7 @@ func charTurn(player *Player, monster *Monster) {
 func trainingFight() {
 	player := initPlayer()
 	monster := initGoblin()
+	player.Spells = initSpells() // Réinitialise les sorts à chaque combat
 	turn := 1
 
 	fmt.Println("=== Début du Combat d'entraînement ===")
@@ -281,4 +285,8 @@ func mainMenu() {
 			fmt.Println("Choix invalide. Veuillez entrer 1 ou 0.")
 		}
 	}
+}
+
+func main() {
+	mainMenu()
 }
