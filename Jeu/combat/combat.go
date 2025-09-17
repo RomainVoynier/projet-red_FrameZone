@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
-    "projet-red_FrameZone/Jeu/character" // le chemin exact selon ton projet
+	// le chemin exact selon ton projet
 )
 
 type Monster struct {
@@ -47,7 +47,7 @@ func initGoblin() Monster {
 	}
 }
 
-func initPlayer() *Character {
+func InitCharacter() *Character {
 	potion := Item{
 		Name:       "Potion de soin",
 		EffectDesc: "Rend 10 PV",
