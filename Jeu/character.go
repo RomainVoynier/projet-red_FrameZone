@@ -1,4 +1,4 @@
-package character
+package main
 
 import (
 	"fmt"
@@ -19,6 +19,8 @@ type Spell struct {
 
 type EquipementPiece struct {
     Nom     string
+    Cout    int
+    Slot    string // "Tete", "Torse", "Pieds"
     BonusHP int
 }
 
@@ -97,6 +99,18 @@ func choisirClasse() Classe {
 	}
 }
 
+func (c *Character) AttribuerSortParClasse() {
+    switch c.Class.Nom {
+    case "Chevalier":
+        c.ApprendreSort("Onde de choc", 30)
+    case "Archer":
+        c.ApprendreSort("Flèche perçante", 25)
+    case "Magicien":
+        c.ApprendreSort("Boule de feu", 40)
+    }
+    // Pas de message si la classe ne correspond à aucune des cases
+}
+
 // Initialisation du personnage
 func InitCharacter() Character {
 	fmt.Print("Entrez le nom de votre personnage : ")
@@ -104,6 +118,17 @@ func InitCharacter() Character {
 	fmt.Scanln(&name)
 
 	classe := choisirClasse()
+
+	var attackBase int
+	switch classe.Nom {
+	case "Chevalier":
+		attackBase = 10
+	case "Archer":
+		attackBase = 8
+	case "Magicien":
+		attackBase = 6
+		// Pas de default
+	}
 
 	return Character{
 		Name:       name,
@@ -113,8 +138,10 @@ func InitCharacter() Character {
 		HpActual:   classe.HpMax,
 		Smic:       50,
 		Equipement: Equipement{},
+		Attack:     attackBase,
 	}
 }
+
 
 // Vérifie si le personnage est mort et le ressuscite
 func (c *Character) IsDead() bool {
@@ -126,6 +153,18 @@ func (c *Character) IsDead() bool {
 	}
 	return false
 }
+
+func (c *Character) ApprendreSort(sort string, damage int) {
+	for _, s := range c.Spells {
+		if s.Name == sort {
+			fmt.Printf("%s connaît déjà le sort %s.\n", c.Name, sort)
+			return
+		}
+	}
+	c.Spells = append(c.Spells, Spell{Name: sort, Damage: damage})
+	fmt.Printf("%s a appris le sort %s avec %d de dégâts.\n", c.Name, sort, damage)
+}
+
 
 // Affichage des infos du personnage
 func (c Character) DisplayInfo() {

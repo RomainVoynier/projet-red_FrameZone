@@ -1,38 +1,15 @@
-package equipement
+package main
 
 import "fmt"
 
-// Boutique d'équipements disponibles
-var Boutique = []Objet{
-	{"Couronne de Lauriers", 5, "Tete", 5},
-	{"Tronc d'Arbre", 15, "Torse", 20},
-	{"Bottes de Sapin", 10, "Pieds", 10},
+var Boutique = []EquipementPiece{
+    {Nom: "Couronne de Lauriers", Cout: 5, Slot: "Tete", BonusHP: 5},
+    {Nom: "Tronc d'Arbre", Cout: 15, Slot: "Torse", BonusHP: 20},
+    {Nom: "Bottes de Sapin", Cout: 10, Slot: "Pieds", BonusHP: 10},
 }
-
-// Structure Equipement
-type Objet struct {
-	Nom     string
-	Cout    int
-	Slot    string // "Tete", "Torse", "Pieds"
-	BonusHP int    // Exemple de bonus (on peut en ajouter d'autres plus tard)
-}
-type Equipement struct {
-    Tete  *ItemEquipement
-    Torse *ItemEquipement
-    Pieds *ItemEquipement
-}
-
-type ItemEquipement struct {
-    Nom     string
-    Slot    string
-    Cout    int
-    BonusHP int
-}
-
-
 
 // Menu du forgeron : Achat d'équipement
-func ForgeronMenu(c *character.Character) {
+func ForgeronMenu(c *Character) {
 	for {
 		fmt.Println("\nBienvenue chez le Forgeron")
 		fmt.Printf("Smic actuel : %d\n", c.Smic)
@@ -72,6 +49,9 @@ func ForgeronMenu(c *character.Character) {
 			c.Equipement.Torse = &objet
 		case "Pieds":
 			c.Equipement.Pieds = &objet
+		default:
+			fmt.Println("Slot inconnu, impossible d’équiper.")
+			continue
 		}
 
 		// Mise à jour des HP max et actuels

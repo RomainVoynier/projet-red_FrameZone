@@ -1,11 +1,11 @@
-package menu
+package main
 
-import (
-	"fmt"
-    "projet-red_FrameZone/Jeu/character"
-)
+import "fmt"
 
-// Affichage simple de noms
+func main() {
+	menu()
+}
+
 func afficherNoms() {
 	fmt.Println("\n=== Liste des noms ===")
 	fmt.Println("1. ABBA")
@@ -15,18 +15,14 @@ func afficherNoms() {
 	fmt.Scanln(&pause)
 }
 
-
-// Simulation d'entraînement
-
 func training() {
 	fmt.Println("\n>>> Début de l'entraînement <<<")
 	var pause string
 	fmt.Scanln(&pause)
 }
 
-
 func menu() {
-	character := character.InitCharacter()
+	character := InitCharacter() // directement ici, sans prefixe
 
 	for {
 		fmt.Println("\n=== MENU PRINCIPAL ===")
@@ -34,8 +30,7 @@ func menu() {
 		fmt.Println("2. Aller chez le Forgeron")
 		fmt.Println("3. Qui sont-ils")
 		fmt.Println("4. Entrainement")
-
-		fmt.Println("5. Quitter") 
+		fmt.Println("5. Quitter")
 
 		var choix int
 		fmt.Print("Choix : ")
@@ -49,11 +44,11 @@ func menu() {
 		case 1:
 			character.DisplayInfo()
 		case 2:
-			ForgeronMenu(&character)
+			ForgeronMenu(&character) // assure-toi que ForgeronMenu est défini dans ce package
 		case 3:
 			afficherNoms()
 		case 4:
-			trainingFight(&character)
+			trainingFight(&character) // idem pour trainingFight
 		case 5:
 			fmt.Println("Au revoir.")
 			return

@@ -1,4 +1,4 @@
-package combat
+package main
 
 import (
 	"bufio"
@@ -6,7 +6,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-    "projet-red_FrameZone/Jeu/character" // le chemin exact selon ton projet
 )
 
 type Monster struct {
@@ -15,18 +14,6 @@ type Monster struct {
 	CurrentHP   int
 	AttackPower int
 	XPReward    int
-}
-
-type Item struct {
-	Name       string
-	EffectDesc string
-	Use        func(*Character)
-}
-
-type Spell struct {
-	Name   string
-	Damage int
-	Used   bool
 }
 
 // Réinitialise les sorts à usage unique
