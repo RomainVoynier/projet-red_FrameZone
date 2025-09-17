@@ -1,0 +1,270 @@
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+)
+
+type Monster struct {
+	Name        string
+	MaxHP       int
+	CurrentHP   int
+	AttackPower int
+	XPReward    int
+}
+
+type Item struct {
+	Name       string
+	EffectDesc string
+	Use        func(*Player)
+}
+
+type Spell struct {
+	Name   string
+	Damage int
+	Used   bool
+}
+
+type Player struct {
+	Name      string
+	HP        int
+	MaxHP     int
+	Inventory []Item
+	Level     int
+	CurrentXP int
+	MaxXP     int
+	Attack    int
+	Spells    []Spell
+}
+
+// Réinitialise les sorts à usage unique
+func initSpells() []Spell {
+	return []Spell{
+		{Name: "Coup de poing", Damage: 8, Used: false},
+		{Name: "Boule de feu", Damage: 18, Used: false},
+	}
+}
+
+func initGoblin() Monster {
+	return Monster{
+		Name:        "Golem d'entraînement",
+		MaxHP:       40,
+		CurrentHP:   40,
+		AttackPower: 5,
+		XPReward:    12,
+	}
+}
+
+func initPlayer() Player {
+	potion := Item{
+		Name:       "Potion de soin",
+		EffectDesc: "Rend 10 PV",
+		Use: func(p *Player) {
+			heal := 10
+			p.HP += heal
+			if p.HP > p.MaxHP {
+				p.HP = p.MaxHP
+			}
+			fmt.Printf("Vous utilisez %s. Vous récupérez 10 PV. PV actuels : %d/%d\n", "Potion de soin", p.HP, p.MaxHP)
+		},
+	}
+
+	return Player{
+		Name:      "Personnage",
+		HP:        30,
+		MaxHP:     30,
+		Inventory: []Item{potion},
+		Level:     1,
+		CurrentXP: 0,
+		MaxXP:     20,
+		Attack:    5,
+		Spells:    initSpells(),
+	}
+}
+
+func gainXP(player *Player, amount int) {
+	fmt.Printf("\nVous gagnez %d points d'expérience !\n", amount)
+	player.CurrentXP += amount
+
+	for player.CurrentXP >= player.MaxXP {
+		player.CurrentXP -= player.MaxXP
+		player.Level++
+		player.MaxXP += 10
+
+		// Bonus de stats à la montée de niveau
+		player.MaxHP += 5
+		player.Attack += 2
+		player.HP = player.MaxHP // soins complets
+
+		fmt.Printf("\n🎉 Vous passez au niveau %d !\n", player.Level)
+		fmt.Printf("→ PV max : %d | Attaque : %d | XP pour le prochain niveau : %d\n", player.MaxHP, player.Attack, player.MaxXP)
+	}
+
+	fmt.Printf("XP actuelle : %d / %d\n", player.CurrentXP, player.MaxXP)
+}
+
+func goblinPattern(monster *Monster, player *Player, turn int) {
+	fmt.Println("\n--- Tour du Monstre ---")
+
+	var damage int
+	if turn%3 == 0 {
+		damage = monster.AttackPower * 2
+		fmt.Printf("%s utilise Attaque SPÉCIALE et inflige %d dégâts à %s.\n", monster.Name, damage, player.Name)
+	} else {
+		damage = monster.AttackPower
+		fmt.Printf("%s attaque et inflige %d dégâts à %s.\n", monster.Name, damage, player.Name)
+	}
+
+	player.HP -= damage
+	if player.HP < 0 {
+		player.HP = 0
+	}
+
+	fmt.Printf("%s - PV : %d / %d\n", player.Name, player.HP, player.MaxHP)
+}
+
+func charTurn(player *Player, monster *Monster) {
+	reader := bufio.NewReader(os.Stdin)
+
+	for {
+		fmt.Println("\n--- Tour du Joueur ---")
+		fmt.Println("1. Attaquer (attaque basique)")
+		fmt.Println("2. Sorts")
+		fmt.Println("3. Inventaire")
+		fmt.Print("Choisissez une option : ")
+
+		input, _ := reader.ReadString('\n')
+		input = strings.TrimSpace(input)
+		choice, err := strconv.Atoi(input)
+
+		if err != nil || choice < 1 || choice > 3 {
+			fmt.Println("Choix invalide. Veuillez entrer 1, 2 ou 3.")
+			continue
+		}
+
+		switch choice {
+		case 1:
+			damage := player.Attack
+			monster.CurrentHP -= damage
+			if monster.CurrentHP < 0 {
+				monster.CurrentHP = 0
+			}
+
+			fmt.Printf("%s utilise Attaque basique et inflige %d dégâts à %s.\n", player.Name, damage, monster.Name)
+			fmt.Printf("%s - PV : %d / %d\n", monster.Name, monster.CurrentHP, monster.MaxHP)
+			return
+
+		case 2:
+			availableSpells := []int{}
+			fmt.Println("\n--- Sorts disponibles ---")
+			for i, spell := range player.Spells {
+				if !spell.Used {
+					fmt.Printf("%d. %s (%d dégâts)\n", len(availableSpells)+1, spell.Name, spell.Damage)
+					availableSpells = append(availableSpells, i)
+				}
+			}
+
+			if len(availableSpells) == 0 {
+				fmt.Println("Aucun sort disponible.")
+				continue
+			}
+
+			fmt.Print("Choisissez un sort : ")
+			spellInput, _ := reader.ReadString('\n')
+			spellInput = strings.TrimSpace(spellInput)
+			spellChoice, err := strconv.Atoi(spellInput)
+
+			if err != nil || spellChoice < 1 || spellChoice > len(availableSpells) {
+				fmt.Println("Sort invalide.")
+				continue
+			}
+
+			spellIndex := availableSpells[spellChoice-1]
+			spell := &player.Spells[spellIndex]
+
+			monster.CurrentHP -= spell.Damage
+			if monster.CurrentHP < 0 {
+				monster.CurrentHP = 0
+			}
+
+			fmt.Printf("%s lance %s et inflige %d dégâts à %s.\n", player.Name, spell.Name, spell.Damage, monster.Name)
+			fmt.Printf("%s - PV : %d / %d\n", monster.Name, monster.CurrentHP, monster.MaxHP)
+
+			spell.Used = true
+			return
+
+		case 3:
+			if len(player.Inventory) == 0 {
+				fmt.Println("\nInventaire vide.")
+			} else {
+				fmt.Println("\n--- Inventaire ---")
+				for i, item := range player.Inventory {
+					fmt.Printf("%d. %s - %s\n", i+1, item.Name, item.EffectDesc)
+				}
+				fmt.Print("Choisissez un objet à utiliser (ou 0 pour annuler) : ")
+
+				input, _ := reader.ReadString('\n')
+				input = strings.TrimSpace(input)
+				itemChoice, err := strconv.Atoi(input)
+
+				if err != nil || itemChoice < 0 || itemChoice > len(player.Inventory) {
+					fmt.Println("Choix invalide.")
+					continue
+				}
+
+				if itemChoice == 0 {
+					fmt.Println("Retour au menu.")
+					continue
+				}
+
+				item := player.Inventory[itemChoice-1]
+				fmt.Printf("Vous utilisez %s.\n", item.Name)
+				item.Use(player)
+
+				player.Inventory = append(player.Inventory[:itemChoice-1], player.Inventory[itemChoice:]...)
+				return
+			}
+		}
+	}
+}
+
+func trainingFight() {
+	player := initPlayer()
+	monster := initGoblin()
+	player.Spells = initSpells() // Réinitialise les sorts à chaque combat
+	turn := 1
+
+	fmt.Println("=== Début du Combat d'entraînement ===")
+	fmt.Printf("Adversaire : %s - PV : %d / %d\n", monster.Name, monster.CurrentHP, monster.MaxHP)
+	fmt.Printf("Vous : %s - PV : %d / %d | Niveau : %d | XP : %d / %d\n", player.Name, player.HP, player.MaxHP, player.Level, player.CurrentXP, player.MaxXP)
+
+	for player.HP > 0 && monster.CurrentHP > 0 {
+		fmt.Printf("\n=== TOUR %d ===\n", turn)
+
+		charTurn(&player, &monster)
+
+		if monster.CurrentHP <= 0 {
+			fmt.Printf("\n%s est vaincu ! Victoire !\n", monster.Name)
+			gainXP(&player, monster.XPReward)
+			break
+		}
+
+		goblinPattern(&monster, &player, turn)
+
+		if player.HP <= 0 {
+			fmt.Printf("\n%s a été vaincu ! Défaite...\n", player.Name)
+			break
+		}
+
+		turn++
+	}
+
+	fmt.Println("\nFin du combat. Merci d'avoir joué !")
+}
+
+func main() {
+	trainingFight()
+}
