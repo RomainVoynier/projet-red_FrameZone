@@ -1,4 +1,4 @@
-package main
+package equipement
 
 import "fmt"
 
@@ -17,14 +17,22 @@ type Objet struct {
 	BonusHP int    // Exemple de bonus (on peut en ajouter d'autres plus tard)
 }
 type Equipement struct {
-	Tete  *Objet
-	Torse *Objet
-	Pieds *Objet
+    Tete  *ItemEquipement
+    Torse *ItemEquipement
+    Pieds *ItemEquipement
+}
+
+type ItemEquipement struct {
+    Nom     string
+    Slot    string
+    Cout    int
+    BonusHP int
 }
 
 
+
 // Menu du forgeron : Achat d'équipement
-func ForgeronMenu(c *Character) {
+func ForgeronMenu(c *character.Character) {
 	for {
 		fmt.Println("\nBienvenue chez le Forgeron")
 		fmt.Printf("Smic actuel : %d\n", c.Smic)

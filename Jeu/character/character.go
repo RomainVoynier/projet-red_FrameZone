@@ -1,46 +1,76 @@
-package main
+package character
 
 import (
 	"fmt"
 	"strings"
 )
 
-// Structure Classe
-type Classe struct {
-	Nom         string
-	Description string
-	HpMax       int
+type Item struct {
+    Name       string
+    EffectDesc string
+    Use        func(*Character)
 }
 
-// Structure Character
-type Character struct {
-	Name       string
-	Class      Classe
-	Level      int
-	HpMax      int
-	HpActual   int
-	Smic       int
-	Equipement Equipement
+type Spell struct {
+    Name   string
+    Damage int
+    Used   bool
 }
+
+type EquipementPiece struct {
+    Nom     string
+    BonusHP int
+}
+
+type Equipement struct {
+    Tete  *EquipementPiece
+    Torse *EquipementPiece
+    Pieds *EquipementPiece
+}
+
+
+type Classe struct {
+    Nom         string
+    Description string
+    HpMax       int
+}
+
+type Character struct {
+    Name       string
+    HpMax      int
+    HpActual   int
+    Level      int
+    CurrentXP  int
+    MaxXP      int
+    Attack     int
+    Inventory  []Item
+    Spells     []Spell
+    Class      Classe      // attention, ce n’est PAS un string
+    Smic       int
+    Equipement Equipement
+}
+
+
 
 // Map des classes disponibles
 var ClassesDisponibles = map[string]Classe{
-	"Chevalier": {
-		Nom:         "Chevalier",
-		Description: "Grand, fort, puissant, résistant mais lent. C'est déja pas mal.",
-		HpMax:       150,
-	},
-	"Archer": {
-		Nom:         "Archer",
-		Description: "Expert en flèches… parfois dans le vide.",
-		HpMax:       75,
-	},
-	"Magicien": {
-		Nom:         "Magicien",
-		Description: "Qui n'a jamais rêvé d'être Harry Potter ?",
-		HpMax:       100,
-	},
+    "Chevalier": {
+        Nom:         "Chevalier",
+        Description: "Grand, fort, puissant, résistant mais lent. C'est déja pas mal.",
+        HpMax:       150,
+    },
+    "Archer": {
+        Nom:         "Archer",
+        Description: "Expert en flèches… parfois dans le vide.",
+        HpMax:       75,
+    },
+    "Magicien": {
+        Nom:         "Magicien",
+        Description: "Qui n'a jamais rêvé d'être Harry Potter ?",
+        HpMax:       100,
+    },
 }
+
 
 // Fonction pour choisir une classe
 func choisirClasse() Classe {

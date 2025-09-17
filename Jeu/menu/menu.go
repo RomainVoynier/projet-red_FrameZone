@@ -1,11 +1,9 @@
-package main
+package menu
 
-import "fmt"
-
-func main() {
-	menu()
-}
-=======
+import (
+	"fmt"
+    "projet-red_FrameZone/Jeu/character"
+)
 
 // Affichage simple de noms
 func afficherNoms() {
@@ -20,7 +18,7 @@ func afficherNoms() {
 
 // Simulation d'entraînement
 
-func trainingFight() {
+func training() {
 	fmt.Println("\n>>> Début de l'entraînement <<<")
 	var pause string
 	fmt.Scanln(&pause)
@@ -28,10 +26,7 @@ func trainingFight() {
 
 
 func menu() {
-
-func main() {
-
-	character := InitCharacter()
+	character := character.InitCharacter()
 
 	for {
 		fmt.Println("\n=== MENU PRINCIPAL ===")
@@ -58,13 +53,12 @@ func main() {
 		case 3:
 			afficherNoms()
 		case 4:
-			trainingFight()
+			trainingFight(&character)
 		case 5:
 			fmt.Println("Au revoir.")
 			return
 		default:
 			fmt.Println("Choix invalide.")
-			}
 		}
 	}
 }
