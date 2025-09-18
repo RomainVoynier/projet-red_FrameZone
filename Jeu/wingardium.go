@@ -2,7 +2,6 @@ package main
 
 import "fmt"
 
-
 type Personnage struct {
 	Nom    string
 	Classe string

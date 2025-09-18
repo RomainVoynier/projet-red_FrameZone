@@ -22,7 +22,7 @@ func training() {
 }
 
 func menu() {
-	character := InitCharacter() 
+	character := InitCharacter()
 	marchand := M()
 
 	for {
@@ -46,11 +46,11 @@ func menu() {
 		case 1:
 			character.DisplayInfo()
 		case 2:
-			ForgeronMenu(&character) 
+			ForgeronMenu(&character)
 		case 3:
 			afficherNoms()
 		case 4:
-			trainingFight(&character) 
+			trainingFight(&character)
 		case 5:
 			accessInventory(&marchand)
 		case 6:

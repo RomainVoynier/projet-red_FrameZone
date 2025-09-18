@@ -3,9 +3,9 @@ package main
 import "fmt"
 
 var Boutique = []EquipementPiece{
-    {Nom: "Couronne de Lauriers", Cout: 5, Slot: "Tete", BonusHP: 5},
-    {Nom: "Tronc d'Arbre", Cout: 15, Slot: "Torse", BonusHP: 20},
-    {Nom: "Bottes de Sapin", Cout: 10, Slot: "Pieds", BonusHP: 10},
+	{Nom: "Couronne de Lauriers", Cout: 5, Slot: "Tete", BonusHP: 5},
+	{Nom: "Tronc d'Arbre", Cout: 15, Slot: "Torse", BonusHP: 20},
+	{Nom: "Bottes de Sapin", Cout: 10, Slot: "Pieds", BonusHP: 10},
 }
 
 // Menu du forgeron : Achat d'équipement
