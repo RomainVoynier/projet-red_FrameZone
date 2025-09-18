@@ -69,6 +69,16 @@ func initGiant() Monster {
 	}
 }
 
+func initDragon() Monster {
+	return Monster{
+		Name:        "Dragon",
+		HpMax:       150,
+		CurrentHP:   150,
+		AttackPower: 30,
+		XPReward:    40,
+	}
+}
+
 func InitHero() *Hero {
 	potion := Artifact{
 		Name:       "Potion de soin",
@@ -300,6 +310,39 @@ func giantFight(hero *Hero) {
 			fmt.Printf("%s est de retour au lobby !\n", hero.Name)
 			hero.HpActual = hero.HpMax / 2
 			fmt.Printf("%s est ressuscité avec %d HP.\n", hero.Name, hero.HpActual)
+		}
+
+		turn++
+	}
+
+	fmt.Println("\nFin du combat.")
+}
+
+func dragonFight(hero *Hero) {
+	monster := initDragon()
+	hero.Spells = initSpells()
+	turn := 1
+
+	fmt.Println("=== Combat contre le Dragon ===")
+	fmt.Printf("Adversaire : %s - PV : %d / %d\n", monster.Name, monster.CurrentHP, monster.HpMax)
+	fmt.Printf("Vous : %s - PV : %d / %d | Niveau : %d | XP : %d / %d\n", hero.Name, hero.HpActual, hero.HpMax, hero.Level, hero.CurrentXP, hero.MaxXP)
+
+	for hero.HpActual > 0 && monster.CurrentHP > 0 {
+		fmt.Printf("\n=== TOUR %d ===\n", turn)
+		heroTurn(hero, &monster)
+
+		if monster.CurrentHP <= 0 {
+			fmt.Printf("\n%s est vaincu ! Victoire !\n", monster.Name)
+			gainXP(hero, monster.XPReward)
+			break
+		}
+
+		monsterTurn(&monster, hero, turn)
+
+		if hero.HpActual <= 0 {
+			fmt.Printf("%s est de retour au lobby !\n", hero.Name)
+			hero.HpActual = hero.HpMax / 2
+			fmt.Printf("%s est ressuscité avec %d HP.\n", hero.Name, hero.HpActual)
 			break
 		}
 
@@ -318,7 +361,8 @@ func gameMenu() {
 		fmt.Println("\n=== Menu Principal ===")
 		fmt.Println("1. Combat d'entraînement (Golem)")
 		fmt.Println("2. Combat intermédiaire (Géant)")
-		fmt.Println("3. Quitter")
+		fmt.Println("3. Combat final (Dragon)")
+		fmt.Println("4. Quitter")
 		fmt.Print("Choisissez une option : ")
 
 		input, _ := reader.ReadString('\n')
@@ -330,10 +374,16 @@ func gameMenu() {
 		case "2":
 			giantFight(hero)
 		case "3":
+			dragonFight(hero)
+		case "4":
 			fmt.Println("À bientôt !")
 			return
 		default:
 			fmt.Println("Choix invalide.")
 		}
 	}
+}
+
+func MAIN() {
+	gameMenu()
 }
