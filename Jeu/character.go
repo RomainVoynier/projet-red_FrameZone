@@ -20,7 +20,7 @@ type Spell struct {
 type EquipementPiece struct {
     Nom     string
     Cout    int
-    Slot    string // "Tete", "Torse", "Pieds"
+    Slot    string // Tete, Torse, Pieds
     BonusHP int
 }
 
@@ -51,8 +51,6 @@ type Character struct {
     Smic       int
     Equipement Equipement
 }
-
-
 
 // Map des classes disponibles
 var ClassesDisponibles = map[string]Classe{

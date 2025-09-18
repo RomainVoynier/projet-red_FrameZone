@@ -31,17 +31,11 @@ func accessInventory(p *MarchandNoir) {
 func M() MarchandNoir {
 	marchand := MarchandNoir{
 		Name:      "Marchand Test",
-		Inventory: []PotionDeVie{},
-		Usable:    true,
+		Inventory: []PotionDeVie{
+			{Name: "Potion de Vie", Quantite: 30},
+		},
+		Usable: true,
 	}
 
-	accessInventory(&marchand)
-
-	marchand.Inventory = append(marchand.Inventory,
-		PotionDeVie{"Potion de Vie", 30},
-	)
-
-	accessInventory(&marchand)
-
-	return marchand
+	return marchand 
 }
