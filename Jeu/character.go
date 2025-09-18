@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -51,7 +53,6 @@ type Character struct {
 	Equipement Equipement
 }
 
-// Map des classes disponibles
 var ClassesDisponibles = map[string]Classe{
 	"Chevalier": {
 		Nom:         "Chevalier",
@@ -70,8 +71,8 @@ var ClassesDisponibles = map[string]Classe{
 	},
 }
 
-// Fonction pour choisir une classe
 func choisirClasse() Classe {
+	reader := bufio.NewReader(os.Stdin)
 	for {
 		fmt.Println("Choisissez une classe :")
 		for _, classe := range ClassesDisponibles {
@@ -79,14 +80,14 @@ func choisirClasse() Classe {
 		}
 		fmt.Print("Votre choix : ")
 
-		var input string
-		_, err := fmt.Scanln(&input)
+		input, err := reader.ReadString('\n')
 		if err != nil {
 			fmt.Println("Entrée invalide.")
 			continue
 		}
 
-		input = strings.Title(strings.ToLower(strings.TrimSpace(input)))
+		input = strings.TrimSpace(input)
+		input = strings.Title(strings.ToLower(input)) // On met la première lettre en majuscule
 
 		if classe, ok := ClassesDisponibles[input]; ok {
 			return classe
@@ -95,11 +96,11 @@ func choisirClasse() Classe {
 	}
 }
 
-// Initialisation du personnage
 func InitCharacter() Character {
+	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Entrez le nom de votre personnage : ")
-	var name string
-	fmt.Scanln(&name)
+	name, _ := reader.ReadString('\n')
+	name = strings.TrimSpace(name)
 
 	classe := choisirClasse()
 
@@ -111,7 +112,6 @@ func InitCharacter() Character {
 		attackBase = 8
 	case "Magicien":
 		attackBase = 6
-		// Pas de default
 	}
 
 	return Character{
@@ -126,7 +126,6 @@ func InitCharacter() Character {
 	}
 }
 
-// Vérifie si le personnage est mort et le ressuscite
 func (c *Character) IsDead() bool {
 	if c.HpActual <= 0 {
 		fmt.Printf("%s est de retour au lobby ! !\n", c.Name)
@@ -148,7 +147,6 @@ func (c *Character) ApprendreSort(sort string, damage int) {
 	fmt.Printf("%s a appris le sort %s avec %d de dégâts.\n", c.Name, sort, damage)
 }
 
-// Affichage des infos du personnage
 func (c Character) DisplayInfo() {
 	fmt.Println("\nInformations du personnage :")
 	fmt.Printf(" Nom        : %s\n", c.Name)

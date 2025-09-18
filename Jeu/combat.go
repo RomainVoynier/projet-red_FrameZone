@@ -1,15 +1,10 @@
 package main
 
-import (
-	"bufio"
-	"fmt"
-	"os"
-	"strconv"
-	"strings"
-)
+import "fmt"
+
 
 // --- Types ---
-type Hero struct {
+type Character2 struct {
 	Name      string
 	HpActual  int
 	HpMax     int
@@ -17,20 +12,14 @@ type Hero struct {
 	Level     int
 	CurrentXP int
 	MaxXP     int
-	Inventory []Artifact
-	Spells    []Skill
+	Inventory []Item
+	Spells    []Spell
 }
 
-type Skill struct {
-	Name   string
-	Damage int
-	Used   bool
-}
-
-type Artifact struct {
+type Item struct {
 	Name       string
 	EffectDesc string
-	Use        func(*Hero)
+	Use        func(*Character)
 }
 
 type Monster struct {
@@ -42,8 +31,8 @@ type Monster struct {
 }
 
 // --- Fonctions d'initialisation ---
-func initSpells() []Skill {
-	return []Skill{
+func initSpells() []Spell {
+	return []Spell{
 		{Name: "Coup de poing", Damage: 8, Used: false},
 		{Name: "Boule de feu", Damage: 18, Used: false},
 	}
@@ -69,25 +58,25 @@ func initGiant() Monster {
 	}
 }
 
-func InitHero() *Hero {
-	potion := Artifact{
+func InitCharacter() *Character {
+	potion := Item{
 		Name:       "Potion de soin",
 		EffectDesc: "Rend 10 PV",
-		Use: func(h *Hero) {
+		Use: func(c *Character) {
 			heal := 10
-			h.HpActual += heal
-			if h.HpActual > h.HpMax {
-				h.HpActual = h.HpMax
+			c.HpActual += heal
+			if c.HpActual > c.HpMax {
+				c.HpActual = c.HpMax
 			}
-			fmt.Printf("Vous utilisez %s. Vous récupérez 10 PV. PV actuels : %d/%d\n", "Potion de soin", h.HpActual, h.HpMax)
+			fmt.Printf("Vous utilisez %s. Vous récupérez 10 PV. PV actuels : %d/%d\n", "Potion de soin", c.HpActual, c.HpMax)
 		},
 	}
 
-	return &Hero{
+	return &Character{
 		Name:      "Personnage",
 		HpActual:  30,
 		HpMax:     30,
-		Inventory: []Artifact{potion},
+		Inventory: []Item{potion},
 		Level:     1,
 		CurrentXP: 0,
 		MaxXP:     20,
@@ -97,175 +86,71 @@ func InitHero() *Hero {
 }
 
 // --- Mécaniques de jeu ---
-func gainXP(hero *Hero, amount int) {
+func gainXP(c *Character, amount int) {
 	fmt.Printf("\nVous gagnez %d points d'expérience !\n", amount)
-	hero.CurrentXP += amount
+	c.CurrentXP += amount
 
-	for hero.CurrentXP >= hero.MaxXP {
-		hero.CurrentXP -= hero.MaxXP
-		hero.Level++
-		hero.MaxXP += 10
-		hero.HpMax += 5
-		hero.Attack += 2
-		hero.HpActual = hero.HpMax
+	for c.CurrentXP >= c.MaxXP {
+		c.CurrentXP -= c.MaxXP
+		c.Level++
+		c.MaxXP += 10
+		c.HpMax += 5
+		c.Attack += 2
+		c.HpActual = c.HpMax
 
-		fmt.Printf("\n🎉 Vous passez au niveau %d !\n", hero.Level)
-		fmt.Printf("→ PV max : %d | Attaque : %d | XP pour le prochain niveau : %d\n", hero.HpMax, hero.Attack, hero.MaxXP)
+		fmt.Printf("\n🎉 Vous passez au niveau %d !\n", c.Level)
+		fmt.Printf("→ PV max : %d | Attaque : %d | XP pour le prochain niveau : %d\n", c.HpMax, c.Attack, c.MaxXP)
 	}
 
-	fmt.Printf("XP actuelle : %d / %d\n", hero.CurrentXP, hero.MaxXP)
+	fmt.Printf("XP actuelle : %d / %d\n", c.CurrentXP, c.MaxXP)
 }
 
-func monsterTurn(monster *Monster, hero *Hero, turn int) {
+func monsterTurn(monster *Monster, c *Character, turn int) {
 	fmt.Println("\n--- Tour du Monstre ---")
 
 	var damage int
 	if turn%3 == 0 {
 		damage = monster.AttackPower * 2
-		fmt.Printf("%s utilise Attaque SPÉCIALE et inflige %d dégâts à %s.\n", monster.Name, damage, hero.Name)
+		fmt.Printf("%s utilise Attaque SPÉCIALE et inflige %d dégâts à %s.\n", monster.Name, damage, c.Name)
 	} else {
 		damage = monster.AttackPower
-		fmt.Printf("%s attaque et inflige %d dégâts à %s.\n", monster.Name, damage, hero.Name)
+		fmt.Printf("%s attaque et inflige %d dégâts à %s.\n", monster.Name, damage, c.Name)
 	}
 
-	hero.HpActual -= damage
-	if hero.HpActual < 0 {
-		hero.HpActual = 0
+	c.HpActual -= damage
+	if c.HpActual < 0 {
+		c.HpActual = 0
 	}
 
-	fmt.Printf("%s - PV : %d / %d\n", hero.Name, hero.HpActual, hero.HpMax)
-}
-
-func heroTurn(hero *Hero, monster *Monster) {
-	reader := bufio.NewReader(os.Stdin)
-
-	for {
-		fmt.Println("\n--- Tour du Joueur ---")
-		fmt.Println("1. Attaquer (attaque basique)")
-		fmt.Println("2. Sorts")
-		fmt.Println("3. Inventaire")
-		fmt.Print("Choisissez une option : ")
-
-		input, _ := reader.ReadString('\n')
-		input = strings.TrimSpace(input)
-		choice, err := strconv.Atoi(input)
-
-		if err != nil || choice < 1 || choice > 3 {
-			fmt.Println("Choix invalide. Veuillez entrer 1, 2 ou 3.")
-			continue
-		}
-
-		switch choice {
-		case 1:
-			damage := hero.Attack
-			monster.CurrentHP -= damage
-			if monster.CurrentHP < 0 {
-				monster.CurrentHP = 0
-			}
-			fmt.Printf("%s utilise Attaque basique et inflige %d dégâts à %s.\n", hero.Name, damage, monster.Name)
-			fmt.Printf("%s - PV : %d / %d\n", monster.Name, monster.CurrentHP, monster.HpMax)
-			return
-
-		case 2:
-			availableSpells := []int{}
-			fmt.Println("\n--- Sorts disponibles ---")
-			for i, spell := range hero.Spells {
-				if !spell.Used {
-					fmt.Printf("%d. %s (%d dégâts)\n", len(availableSpells)+1, spell.Name, spell.Damage)
-					availableSpells = append(availableSpells, i)
-				}
-			}
-
-			if len(availableSpells) == 0 {
-				fmt.Println("Aucun sort disponible.")
-				continue
-			}
-
-			fmt.Print("Choisissez un sort : ")
-			spellInput, _ := reader.ReadString('\n')
-			spellInput = strings.TrimSpace(spellInput)
-			spellChoice, err := strconv.Atoi(spellInput)
-
-			if err != nil || spellChoice < 1 || spellChoice > len(availableSpells) {
-				fmt.Println("Sort invalide.")
-				continue
-			}
-
-			spellIndex := availableSpells[spellChoice-1]
-			spell := &hero.Spells[spellIndex]
-
-			monster.CurrentHP -= spell.Damage
-			if monster.CurrentHP < 0 {
-				monster.CurrentHP = 0
-			}
-
-			fmt.Printf("%s lance %s et inflige %d dégâts à %s.\n", hero.Name, spell.Name, spell.Damage, monster.Name)
-			fmt.Printf("%s - PV : %d / %d\n", monster.Name, monster.CurrentHP, monster.HpMax)
-
-			spell.Used = true
-			return
-
-		case 3:
-			if len(hero.Inventory) == 0 {
-				fmt.Println("\nInventaire vide.")
-			} else {
-				fmt.Println("\n--- Inventaire ---")
-				for i, item := range hero.Inventory {
-					fmt.Printf("%d. %s - %s\n", i+1, item.Name, item.EffectDesc)
-				}
-				fmt.Print("Choisissez un objet à utiliser (ou 0 pour annuler) : ")
-
-				input, _ := reader.ReadString('\n')
-				input = strings.TrimSpace(input)
-				itemChoice, err := strconv.Atoi(input)
-
-				if err != nil || itemChoice < 0 || itemChoice > len(hero.Inventory) {
-					fmt.Println("Choix invalide.")
-					continue
-				}
-
-				if itemChoice == 0 {
-					fmt.Println("Retour au menu.")
-					continue
-				}
-
-				item := hero.Inventory[itemChoice-1]
-				fmt.Printf("Vous utilisez %s.\n", item.Name)
-				item.Use(hero)
-
-				hero.Inventory = append(hero.Inventory[:itemChoice-1], hero.Inventory[itemChoice:]...)
-				return
-			}
-		}
-	}
+	fmt.Printf("%s - PV : %d / %d\n", c.Name, c.HpActual, c.HpMax)
 }
 
 // --- Combats ---
-func trainingFight(hero *Hero) {
+func trainingFight(c *Character) {
 	monster := initGoblin()
-	hero.Spells = initSpells()
+	c.Spells = initSpells()
 	turn := 1
 
 	fmt.Println("=== Début du Combat d'entraînement ===")
 	fmt.Printf("Adversaire : %s - PV : %d / %d\n", monster.Name, monster.CurrentHP, monster.HpMax)
-	fmt.Printf("Vous : %s - PV : %d / %d | Niveau : %d | XP : %d / %d\n", hero.Name, hero.HpActual, hero.HpMax, hero.Level, hero.CurrentXP, hero.MaxXP)
+	fmt.Printf("Vous : %s - PV : %d / %d | Niveau : %d | XP : %d / %d\n", c.Name, c.HpActual, c.HpMax, c.Level, c.CurrentXP, c.MaxXP)
 
-	for hero.HpActual > 0 && monster.CurrentHP > 0 {
+	for c.HpActual > 0 && monster.CurrentHP > 0 {
 		fmt.Printf("\n=== TOUR %d ===\n", turn)
-		heroTurn(hero, &monster)
+		characterTurn(c, &monster) // Assure-toi d'avoir cette fonction
 
 		if monster.CurrentHP <= 0 {
 			fmt.Printf("\n%s est vaincu ! Victoire !\n", monster.Name)
-			gainXP(hero, monster.XPReward)
+			gainXP(c, monster.XPReward)
 			break
 		}
 
-		monsterTurn(&monster, hero, turn)
+		monsterTurn(&monster, c, turn)
 
-		if hero.HpActual <= 0 {
-			fmt.Printf("%s est de retour au lobby !\n", hero.Name)
-			hero.HpActual = hero.HpMax / 2
-			fmt.Printf("%s est ressuscité avec %d HP.\n", hero.Name, hero.HpActual)
+		if c.HpActual <= 0 {
+			fmt.Printf("%s est de retour au lobby !\n", c.Name)
+			c.HpActual = c.HpMax / 2
+			fmt.Printf("%s est ressuscité avec %d HP.\n", c.Name, c.HpActual)
 			break
 		}
 
@@ -275,31 +160,31 @@ func trainingFight(hero *Hero) {
 	fmt.Println("\nFin du combat.")
 }
 
-func giantFight(hero *Hero) {
+func giantFight(c *Character) {
 	monster := initGiant()
-	hero.Spells = initSpells()
+	c.Spells = initSpells()
 	turn := 1
 
 	fmt.Println("=== Combat contre le Géant ===")
 	fmt.Printf("Adversaire : %s - PV : %d / %d\n", monster.Name, monster.CurrentHP, monster.HpMax)
-	fmt.Printf("Vous : %s - PV : %d / %d | Niveau : %d | XP : %d / %d\n", hero.Name, hero.HpActual, hero.HpMax, hero.Level, hero.CurrentXP, hero.MaxXP)
+	fmt.Printf("Vous : %s - PV : %d / %d | Niveau : %d | XP : %d / %d\n", c.Name, c.HpActual, c.HpMax, c.Level, c.CurrentXP, c.MaxXP)
 
-	for hero.HpActual > 0 && monster.CurrentHP > 0 {
+	for c.HpActual > 0 && monster.CurrentHP > 0 {
 		fmt.Printf("\n=== TOUR %d ===\n", turn)
-		heroTurn(hero, &monster)
+		characterTurn(c, &monster) // Assure-toi d'avoir cette fonction
 
 		if monster.CurrentHP <= 0 {
 			fmt.Printf("\n%s est vaincu ! Victoire !\n", monster.Name)
-			gainXP(hero, monster.XPReward)
+			gainXP(c, monster.XPReward)
 			break
 		}
 
-		monsterTurn(&monster, hero, turn)
+		monsterTurn(&monster, c, turn)
 
-		if hero.HpActual <= 0 {
-			fmt.Printf("%s est de retour au lobby !\n", hero.Name)
-			hero.HpActual = hero.HpMax / 2
-			fmt.Printf("%s est ressuscité avec %d HP.\n", hero.Name, hero.HpActual)
+		if c.HpActual <= 0 {
+			fmt.Printf("%s est de retour au lobby !\n", c.Name)
+			c.HpActual = c.HpMax / 2
+			fmt.Printf("%s est ressuscité avec %d HP.\n", c.Name, c.HpActual)
 			break
 		}
 
@@ -309,31 +194,26 @@ func giantFight(hero *Hero) {
 	fmt.Println("\nFin du combat.")
 }
 
-// --- Menu principal ---
-func gameMenu() {
-	reader := bufio.NewReader(os.Stdin)
-	hero := InitHero()
+// --- Affichage du statut ---
+func (c *Character) DisplayStatus() {
+	fmt.Printf("\n=== Statut de %s ===\n", c.Name)
+	fmt.Printf("Niveau : %d\n", c.Level)
+	fmt.Printf("PV : %d / %d\n", c.HpActual, c.HpMax)
+	fmt.Printf("Attaque : %d\n", c.Attack)
+	fmt.Printf("XP : %d / %d\n", c.CurrentXP, c.MaxXP)
 
-	for {
-		fmt.Println("\n=== Menu Principal ===")
-		fmt.Println("1. Combat d'entraînement (Golem)")
-		fmt.Println("2. Combat intermédiaire (Géant)")
-		fmt.Println("3. Quitter")
-		fmt.Print("Choisissez une option : ")
+	fmt.Println("Sorts connus :")
+	for _, s := range c.Spells {
+		fmt.Printf("- %s (%d dégâts)\n", s.Name, s.Damage)
+	}
 
-		input, _ := reader.ReadString('\n')
-		input = strings.TrimSpace(input)
-
-		switch input {
-		case "1":
-			trainingFight(hero)
-		case "2":
-			giantFight(hero)
-		case "3":
-			fmt.Println("À bientôt !")
-			return
-		default:
-			fmt.Println("Choix invalide.")
+	if len(c.Inventory) == 0 {
+		fmt.Println("Inventaire : Vide")
+	} else {
+		fmt.Println("Inventaire :")
+		for _, item := range c.Inventory {
+			fmt.Printf("- %s : %s\n", item.Name, item.EffectDesc)
 		}
 	}
+	fmt.Println()
 }
