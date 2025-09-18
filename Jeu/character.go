@@ -47,7 +47,7 @@ type Character struct {
     Attack     int
     Inventory  []Item
     Spells     []Spell
-    Class      Classe      // attention, ce n’est PAS un string
+    Class      Classe      
     Smic       int
     Equipement Equipement
 }
@@ -108,7 +108,6 @@ func (c *Character) AttribuerSortParClasse() {
     case "Magicien":
         c.ApprendreSort("Boule de feu", 40)
     }
-    // Pas de message si la classe ne correspond à aucune des cases
 }
 
 // Initialisation du personnage
