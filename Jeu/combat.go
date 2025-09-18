@@ -1,4 +1,4 @@
-package combat
+package main
 
 import (
 	"bufio"
@@ -6,7 +6,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	// le chemin exact selon ton projet
 )
 
 type Monster struct {
@@ -15,18 +14,6 @@ type Monster struct {
 	CurrentHP   int
 	AttackPower int
 	XPReward    int
-}
-
-type Item struct {
-	Name       string
-	EffectDesc string
-	Use        func(*Character)
-}
-
-type Spell struct {
-	Name   string
-	Damage int
-	Used   bool
 }
 
 // Réinitialise les sorts à usage unique
@@ -47,7 +34,7 @@ func initGoblin() Monster {
 	}
 }
 
-func InitCharacter() *Character {
+func IniCharacter() *Character {
 	potion := Item{
 		Name:       "Potion de soin",
 		EffectDesc: "Rend 10 PV",
@@ -87,7 +74,7 @@ func gainXP(character *Character, amount int) {
 		character.Attack += 2
 		character.HpActual = character.HpMax
 
-		fmt.Printf("\n🎉 Vous passez au niveau %d !\n", character.Level)
+		fmt.Printf("\n Vous passez au niveau %d !\n", character.Level)
 		fmt.Printf("→ PV max : %d | Attaque : %d | XP pour le prochain niveau : %d\n", character.HpMax, character.Attack, character.MaxXP)
 	}
 
