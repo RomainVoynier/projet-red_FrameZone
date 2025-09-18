@@ -8,6 +8,31 @@ import (
 	"strings"
 )
 
+// --- Types manquants à ajouter ---
+type Character struct {
+	Name      string
+	HpActual  int
+	HpMax     int
+	Attack    int
+	Level     int
+	CurrentXP int
+	MaxXP     int
+	Inventory []Item
+	Spells    []Spell
+}
+
+type Spell struct {
+	Name   string
+	Damage int
+	Used   bool
+}
+
+type Item struct {
+	Name       string
+	EffectDesc string
+	Use        func(*Character)
+}
+
 type Monster struct {
 	Name        string
 	HpMax       int
@@ -16,7 +41,7 @@ type Monster struct {
 	XPReward    int
 }
 
-// Réinitialise les sorts à usage unique
+// --- Fonctions d'initialisation ---
 func initSpells() []Spell {
 	return []Spell{
 		{Name: "Coup de poing", Damage: 8, Used: false},
@@ -31,6 +56,16 @@ func initGoblin() Monster {
 		CurrentHP:   40,
 		AttackPower: 5,
 		XPReward:    12,
+	}
+}
+
+func initGiant() Monster {
+	return Monster{
+		Name:        "Géant",
+		HpMax:       80,
+		CurrentHP:   80,
+		AttackPower: 15,
+		XPReward:    20,
 	}
 }
 
@@ -61,6 +96,7 @@ func IniCharacter() *Character {
 	}
 }
 
+// --- Mécaniques de jeu ---
 func gainXP(character *Character, amount int) {
 	fmt.Printf("\nVous gagnez %d points d'expérience !\n", amount)
 	character.CurrentXP += amount
@@ -206,9 +242,10 @@ func charTurn(character *Character, monster *Monster) {
 	}
 }
 
+// --- Combats ---
 func trainingFight(character *Character) {
 	monster := initGoblin()
-	character.Spells = initSpells() // Réinitialise les sorts à chaque combat
+	character.Spells = initSpells()
 	turn := 1
 
 	fmt.Println("=== Début du Combat d'entraînement ===")
@@ -239,4 +276,68 @@ func trainingFight(character *Character) {
 	}
 
 	fmt.Println("\nFin du combat. Merci d'avoir joué !")
+}
+
+func giantFight(character *Character) {
+	monster := initGiant()
+	character.Spells = initSpells()
+	turn := 1
+
+	fmt.Println("=== Combat contre le Géant ===")
+	fmt.Printf("Adversaire : %s - PV : %d / %d\n", monster.Name, monster.CurrentHP, monster.HpMax)
+	fmt.Printf("Vous : %s - PV : %d / %d | Niveau : %d | XP : %d / %d\n", character.Name, character.HpActual, character.HpMax, character.Level, character.CurrentXP, character.MaxXP)
+
+	for character.HpActual > 0 && monster.CurrentHP > 0 {
+		fmt.Printf("\n=== TOUR %d ===\n", turn)
+
+		charTurn(character, &monster)
+
+		if monster.CurrentHP <= 0 {
+			fmt.Printf("\n%s est vaincu ! Victoire !\n", monster.Name)
+			gainXP(character, monster.XPReward)
+			break
+		}
+
+		goblinPattern(&monster, character, turn)
+
+		if character.HpActual <= 0 {
+			fmt.Printf("%s est de retour au lobby ! !\n", character.Name)
+			character.HpActual = character.HpMax / 2
+			fmt.Printf("%s est ressuscité avec %d HP.\n", character.Name, character.HpActual)
+			break
+		}
+
+		turn++
+	}
+
+	fmt.Println("\nFin du combat. Merci d'avoir joué !")
+}
+
+// --- Menu principal ---
+func main() {
+	reader := bufio.NewReader(os.Stdin)
+	character := IniCharacter()
+
+	for {
+		fmt.Println("\n=== Menu Principal ===")
+		fmt.Println("1. Combat d'entraînement (Golem)")
+		fmt.Println("2. Combat intermédiaire (Géant)")
+		fmt.Println("3. Quitter")
+		fmt.Print("Choisissez une option : ")
+
+		input, _ := reader.ReadString('\n')
+		input = strings.TrimSpace(input)
+
+		switch input {
+		case "1":
+			trainingFight(character)
+		case "2":
+			giantFight(character)
+		case "3":
+			fmt.Println("À bientôt !")
+			return
+		default:
+			fmt.Println("Choix invalide.")
+		}
+	}
 }
