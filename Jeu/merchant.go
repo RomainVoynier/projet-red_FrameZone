@@ -28,7 +28,7 @@ func accessInventory(p *MarchandNoir) {
 	}
 }
 
-func M() {
+func M() MarchandNoir {
 	marchand := MarchandNoir{
 		Name:      "Marchand Test",
 		Inventory: []PotionDeVie{},
@@ -42,4 +42,6 @@ func M() {
 	)
 
 	accessInventory(&marchand)
+
+	return marchand
 }

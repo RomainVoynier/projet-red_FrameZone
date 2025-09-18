@@ -22,7 +22,8 @@ func training() {
 }
 
 func menu() {
-	character := InitCharacter() // directement ici, sans prefixe
+	character := InitCharacter() 
+	marchand := M()
 
 	for {
 		fmt.Println("\n=== MENU PRINCIPAL ===")
@@ -30,7 +31,8 @@ func menu() {
 		fmt.Println("2. Aller chez le Forgeron")
 		fmt.Println("3. Qui sont-ils")
 		fmt.Println("4. Entrainement")
-		fmt.Println("5. Quitter")
+		fmt.Println("5. Marchand")
+		fmt.Println("6. Quitter")
 
 		var choix int
 		fmt.Print("Choix : ")
@@ -44,12 +46,14 @@ func menu() {
 		case 1:
 			character.DisplayInfo()
 		case 2:
-			ForgeronMenu(&character) // assure-toi que ForgeronMenu est défini dans ce package
+			ForgeronMenu(&character) 
 		case 3:
 			afficherNoms()
 		case 4:
-			trainingFight(&character) // idem pour trainingFight
+			trainingFight(&character) 
 		case 5:
+			accessInventory(&marchand)
+		case 6:
 			fmt.Println("Au revoir.")
 			return
 		default:

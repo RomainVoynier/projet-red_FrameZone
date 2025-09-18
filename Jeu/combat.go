@@ -229,7 +229,9 @@ func trainingFight(character *Character) {
 		goblinPattern(&monster, character, turn)
 
 		if character.HpActual <= 0 {
-			fmt.Printf("\n%s a été vaincu ! Défaite...\n", character.Name)
+			fmt.Printf("%s est de retour au lobby ! !\n", character.Name)
+			character.HpActual = character.HpMax / 2
+			fmt.Printf("%s est ressuscité avec %d HP.\n", character.Name, character.HpActual)
 			break
 		}
 
