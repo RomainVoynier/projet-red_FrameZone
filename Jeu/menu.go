@@ -48,9 +48,6 @@ func afficherNoms() {
 func menu() {
 	character := InitCharacter()
 	marchand := M()
-	hero := convertCharacterToHero(&character)
-	trainingFight(hero)
-
 	for {
 		fmt.Println("\n=== MENU PRINCIPAL ===")
 		fmt.Println("1. Afficher les infos du personnage")
@@ -76,7 +73,7 @@ func menu() {
 		case 3:
 			afficherNoms()
 		case 4:
-			trainingFight(hero)
+			trainingFight(&character)
 		case 5:
 			accessInventory(&marchand)
 		case 6:
@@ -85,15 +82,5 @@ func menu() {
 		default:
 			fmt.Println("Choix invalide.")
 		}
-	}
-}
-
-func convertCharacterToHero(c *Character) *Hero {
-	return &Hero{
-		Name:     c.Name,
-		HpActual: c.HpActual,
-		HpMax:    c.HpMax,
-		Level:    c.Level,
-		// Complète avec les autres champs nécessaires
 	}
 }

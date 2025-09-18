@@ -16,12 +16,6 @@ type Character2 struct {
 	Spells    []Spell
 }
 
-type Item struct {
-	Name       string
-	EffectDesc string
-	Use        func(*Character)
-}
-
 type Monster struct {
 	Name        string
 	HpMax       int
@@ -55,33 +49,6 @@ func initGiant() Monster {
 		CurrentHP:   80,
 		AttackPower: 15,
 		XPReward:    20,
-	}
-}
-
-func InitCharacter() *Character {
-	potion := Item{
-		Name:       "Potion de soin",
-		EffectDesc: "Rend 10 PV",
-		Use: func(c *Character) {
-			heal := 10
-			c.HpActual += heal
-			if c.HpActual > c.HpMax {
-				c.HpActual = c.HpMax
-			}
-			fmt.Printf("Vous utilisez %s. Vous récupérez 10 PV. PV actuels : %d/%d\n", "Potion de soin", c.HpActual, c.HpMax)
-		},
-	}
-
-	return &Character{
-		Name:      "Personnage",
-		HpActual:  30,
-		HpMax:     30,
-		Inventory: []Item{potion},
-		Level:     1,
-		CurrentXP: 0,
-		MaxXP:     20,
-		Attack:    5,
-		Spells:    initSpells(),
 	}
 }
 
@@ -137,7 +104,6 @@ func trainingFight(c *Character) {
 
 	for c.HpActual > 0 && monster.CurrentHP > 0 {
 		fmt.Printf("\n=== TOUR %d ===\n", turn)
-		characterTurn(c, &monster) // Assure-toi d'avoir cette fonction
 
 		if monster.CurrentHP <= 0 {
 			fmt.Printf("\n%s est vaincu ! Victoire !\n", monster.Name)
@@ -171,7 +137,6 @@ func giantFight(c *Character) {
 
 	for c.HpActual > 0 && monster.CurrentHP > 0 {
 		fmt.Printf("\n=== TOUR %d ===\n", turn)
-		characterTurn(c, &monster) // Assure-toi d'avoir cette fonction
 
 		if monster.CurrentHP <= 0 {
 			fmt.Printf("\n%s est vaincu ! Victoire !\n", monster.Name)
