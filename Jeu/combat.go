@@ -69,8 +69,6 @@ func initGiant() Monster {
 	}
 }
 
-<<<<<<< HEAD
-=======
 func initDragon() Monster {
 	return Monster{
 		Name:        "Dragon",
@@ -108,7 +106,6 @@ func InitHero() *Hero {
 	}
 }
 
->>>>>>> 48846451bf4c60d62ef92e9405ddb597920fcf31
 // --- Mécaniques de jeu ---
 func gainXP(hero *Hero, amount int) {
 	fmt.Printf("\nVous gagnez %d points d'expérience !\n", amount)
@@ -265,10 +262,8 @@ func trainingFight(hero *Hero) {
 
 	for hero.HpActual > 0 && monster.CurrentHP > 0 {
 		fmt.Printf("\n=== TOUR %d ===\n", turn)
-<<<<<<< HEAD
-=======
+
 		heroTurn(hero, &monster)
->>>>>>> 48846451bf4c60d62ef92e9405ddb597920fcf31
 
 		if monster.CurrentHP <= 0 {
 			fmt.Printf("\n%s est vaincu ! Victoire !\n", monster.Name)
@@ -302,10 +297,7 @@ func giantFight(hero *Hero) {
 
 	for hero.HpActual > 0 && monster.CurrentHP > 0 {
 		fmt.Printf("\n=== TOUR %d ===\n", turn)
-<<<<<<< HEAD
-=======
 		heroTurn(hero, &monster)
->>>>>>> 48846451bf4c60d62ef92e9405ddb597920fcf31
 
 		if monster.CurrentHP <= 0 {
 			fmt.Printf("\n%s est vaincu ! Victoire !\n", monster.Name)
