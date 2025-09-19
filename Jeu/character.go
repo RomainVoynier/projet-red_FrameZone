@@ -10,7 +10,7 @@ import (
 type Item struct {
 	Name       string
 	EffectDesc string
-	Use        func(*Character)
+	Use        func(c *Character)
 }
 
 type Spell struct {
@@ -120,13 +120,13 @@ func InitCharacter() Character {
 		attackBase = 8
 		spells = []Spell{
 			{Name: "Flèche empoisonnée", Damage: 25, Used: false},
-			{Name: "Tir Fatal", Damage: 40, Used: false},
+			{Name: "Tir Fatal", Damage: 45, Used: false},
 		}
 	case "Magicien":
-		attackBase = 6
+		attackBase = 9
 		spells = []Spell{
-			{Name: "Blizard Éternel", Damage: 35, Used: false},
-			{Name: "Éclair pulverisant", Damage: 25, Used: false},
+			{Name: "Blizard Éternel", Damage: 30, Used: false},
+			{Name: "Éclair pulverisant", Damage: 35, Used: false},
 		}
 	}
 

@@ -23,33 +23,12 @@ type Monster struct {
 func initGoblin() Monster {
 	return Monster{
 		Name:        "Alatreon",
-		HpMax:       150,
-		CurrentHP:   150,
-		AttackPower: 20,
+		HpMax:       140,
+		CurrentHP:   140,
+		AttackPower: 10,
 		XPReward:    30,
 	}
 }
-
-func initGiant() Monster {
-	return Monster{
-		Name:        "Géant",
-		HpMax:       80,
-		CurrentHP:   80,
-		AttackPower: 15,
-		XPReward:    20,
-	}
-}
-
-func initDragon() Monster {
-	return Monster{
-		Name:        "Dragon",
-		HpMax:       150,
-		CurrentHP:   150,
-		AttackPower: 30,
-		XPReward:    40,
-	}
-}
-
 // --- Mécanique d'expérience ---
 
 func gainXP(c *Character, amount int) {
