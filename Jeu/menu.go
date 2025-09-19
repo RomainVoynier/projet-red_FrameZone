@@ -53,7 +53,7 @@ func menu() {
 		fmt.Println("1. Afficher les infos du personnage")
 		fmt.Println("2. Aller chez le Forgeron")
 		fmt.Println("3. Qui sont-ils")
-		fmt.Println("4. Entrainement")
+		fmt.Println("4. Alatreon")
 		fmt.Println("5. Marchand")
 		fmt.Println("6. Quitter")
 

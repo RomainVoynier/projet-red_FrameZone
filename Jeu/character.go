@@ -98,6 +98,7 @@ func choisirClasse() Classe {
 
 func InitCharacter() Character {
 	reader := bufio.NewReader(os.Stdin)
+
 	fmt.Print("Entrez le nom de votre personnage : ")
 	name, _ := reader.ReadString('\n')
 	name = strings.TrimSpace(name)
@@ -105,13 +106,28 @@ func InitCharacter() Character {
 	classe := choisirClasse()
 
 	var attackBase int
+	var spells []Spell
+
+	// Initialisation selon la classe
 	switch classe.Nom {
 	case "Chevalier":
 		attackBase = 10
+		spells = []Spell{
+			{Name: "Coup d'estoc", Damage: 20, Used: false},
+			{Name: "Passage en Force", Damage: 25, Used: false},
+		}
 	case "Archer":
 		attackBase = 8
+		spells = []Spell{
+			{Name: "Flèche empoisonnée", Damage: 25, Used: false},
+			{Name: "Tir Fatal", Damage: 40, Used: false},
+		}
 	case "Magicien":
 		attackBase = 6
+		spells = []Spell{
+			{Name: "Blizard Éternel", Damage: 35, Used: false},
+			{Name: "Éclair pulverisant", Damage: 25, Used: false},
+		}
 	}
 
 	return Character{
@@ -120,31 +136,23 @@ func InitCharacter() Character {
 		Level:      1,
 		HpMax:      classe.HpMax,
 		HpActual:   classe.HpMax,
-		Smic:       50,
-		Equipement: Equipement{},
 		Attack:     attackBase,
+		Smic:       50,
+		Spells:     spells,
+		Inventory:  []Item{},
+		Equipement: Equipement{},
 	}
 }
 
+
 func (c *Character) IsDead() bool {
 	if c.HpActual <= 0 {
-		fmt.Printf("%s est de retour au lobby ! !\n", c.Name)
+		fmt.Printf("%s est de retour au lobby ! \n", c.Name)
 		c.HpActual = c.HpMax / 2
 		fmt.Printf("%s est ressuscité avec %d HP.\n", c.Name, c.HpActual)
 		return true
 	}
 	return false
-}
-
-func (c *Character) ApprendreSort(sort string, damage int) {
-	for _, s := range c.Spells {
-		if s.Name == sort {
-			fmt.Printf("%s connaît déjà le sort %s.\n", c.Name, sort)
-			return
-		}
-	}
-	c.Spells = append(c.Spells, Spell{Name: sort, Damage: damage})
-	fmt.Printf("%s a appris le sort %s avec %d de dégâts.\n", c.Name, sort, damage)
 }
 
 func (c Character) DisplayInfo() {

@@ -32,7 +32,8 @@ func ForgeronMenu(c *Character) {
 			return
 		}
 
-		objet := Boutique[choix-1]
+		objet := &Boutique[choix-1]
+
 		if c.Smic < objet.Cout {
 			fmt.Println("Trop pauvre pour cet objet.")
 			continue
@@ -44,22 +45,28 @@ func ForgeronMenu(c *Character) {
 		// Équipement selon le slot
 		switch objet.Slot {
 		case "Tete":
-			c.Equipement.Tete = &objet
+			c.Equipement.Tete = objet
 		case "Torse":
-			c.Equipement.Torse = &objet
+			c.Equipement.Torse = objet
 		case "Pieds":
-			c.Equipement.Pieds = &objet
+			c.Equipement.Pieds = objet
 		default:
 			fmt.Println("Slot inconnu, impossible d’équiper.")
 			continue
 		}
 
-		// Mise à jour des HP max et actuels
+		// Mise à jour des HP max et actuels avec augmentation de la vie actuelle
+		ancienHpMax := c.HpMax
+
 		c.HpMax = c.CalculerHpMax()
+		gain := c.HpMax - ancienHpMax
+		c.HpActual += gain
+
 		if c.HpActual > c.HpMax {
 			c.HpActual = c.HpMax
 		}
 
-		fmt.Printf("Vous avez équipé %s ! Nouveau HP max : %d\n", objet.Nom, c.HpMax)
+		fmt.Printf("Vous avez équipé %s ! +%d HP\n", objet.Nom, gain)
+		fmt.Printf("PV actuel : %d / %d\n", c.HpActual, c.HpMax)
 	}
 }

@@ -226,10 +226,7 @@ func trainingFight(c *Character) {
 		}
 
 		monsterTurn(&monster, c, turn)
-
-		if c.HpActual <= 0 {
-			c.HpActual = c.HpMax / 2
-			fmt.Printf("%s est ressuscité avec %d HP.\n", c.Name, c.HpActual)
+		if c.IsDead() {
 			break
 		}
 
