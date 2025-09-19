@@ -12,23 +12,21 @@ type Joueur struct {
 }
 
 func takePot(j *Joueur) {
-	potionIndex := -1
-	for i, item := range j.Inventaire {
+	// Vérifie si au moins une potion est présente
+	potionTrouvee := false
+	for _, item := range j.Inventaire {
 		if item == "potion" {
-			potionIndex = i
+			potionTrouvee = true
 			break
 		}
 	}
 
-	if potionIndex == -1 {
+	if !potionTrouvee {
 		fmt.Println("Aucune potion disponible dans l'inventaire.")
 		return
 	}
 
-	// Retirer la potion de l'inventaire
-	j.Inventaire = append(j.Inventaire[:potionIndex], j.Inventaire[potionIndex+1:]...)
-
-	// Soigner le joueur
+	// Soigner le joueur sans retirer la potion
 	soin := 50
 	ancienPV := j.PV
 	j.PV += soin
