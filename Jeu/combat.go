@@ -22,11 +22,11 @@ type Monster struct {
 
 func initGoblin() Monster {
 	return Monster{
-		Name:        "Golem d'entraînement",
-		HpMax:       40,
-		CurrentHP:   40,
-		AttackPower: 5,
-		XPReward:    12,
+		Name:        "Alatreon",
+		HpMax:       150,
+		CurrentHP:   150,
+		AttackPower: 20,
+		XPReward:    30,
 	}
 }
 
@@ -210,7 +210,7 @@ func trainingFight(c *Character) {
 	}
 	turn := 1
 
-	fmt.Println("=== Début du Combat d'entraînement ===")
+	fmt.Println("=== Début du combat contre Alatreon ===")
 	fmt.Printf("Adversaire : %s - PV : %d / %d\n", monster.Name, monster.CurrentHP, monster.HpMax)
 	fmt.Printf("Vous : %s - PV : %d / %d | Niveau : %d | XP : %d / %d\n", c.Name, c.HpActual, c.HpMax, c.Level, c.CurrentXP, c.MaxXP)
 
